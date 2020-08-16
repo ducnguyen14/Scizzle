@@ -16,10 +16,10 @@ public class BottomNavigationViewHelper {
         bottomNavigationViewEx.enableAnimation(false);
         bottomNavigationViewEx.enableItemShiftingMode(false);
         bottomNavigationViewEx.enableShiftingMode(false);
+//        bottomNavigationViewEx.setTextVisibility(false);
 
-        // Notes: Temporary solution to icons not showing up in the bottom navigation bar
+        // Notes: Temporary solution to indicate which icon is the current on the bottom navigation bar
         bottomNavigationViewEx.setTextVisibility(true);
-        bottomNavigationViewEx.setIconVisibility(true);
 
     }
 

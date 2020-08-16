@@ -9,6 +9,9 @@ import com.example.instaclone.Utils.BottomNavigationViewHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
+
+
+
 public class HomeActivity extends AppCompatActivity {
 
     private static final String TAG = "HomeActivity/DEBUG";

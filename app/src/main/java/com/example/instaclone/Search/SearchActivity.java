@@ -1,4 +1,4 @@
-package com.example.instaclone;
+package com.example.instaclone.Search;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,13 +9,16 @@ import android.view.MenuItem;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.instaclone.R;
 import com.example.instaclone.Utils.BottomNavigationViewHelper;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
-public class NotificationActivity extends AppCompatActivity {
-    private static final String TAG = "NotificationActivity/DEBUG";
-    private static final int ACTIVITY_NUM = 3;
-    private Context mContext = NotificationActivity.this;
+public class SearchActivity extends AppCompatActivity {
+    private static final String TAG = "SearchActivity/DEBUG";
+    private static final int ACTIVITY_NUM = 1;
+
+    private Context mContext = SearchActivity.this;
+
 
 
     @Override

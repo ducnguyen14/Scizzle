@@ -2,17 +2,16 @@ package com.example.instaclone.Utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 
-import com.example.instaclone.HomeActivity;
-import com.example.instaclone.NotificationActivity;
-import com.example.instaclone.ProfileActivity;
+import com.example.instaclone.Home.HomeActivity;
+import com.example.instaclone.Notifications.NotificationsActivity;
+import com.example.instaclone.Profile.ProfileActivity;
 import com.example.instaclone.R;
-import com.example.instaclone.SearchActivity;
-import com.example.instaclone.ShareActivity;
+import com.example.instaclone.Search.SearchActivity;
+import com.example.instaclone.Share.ShareActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
@@ -30,6 +29,7 @@ public class BottomNavigationViewHelper {
         bottomNavigationViewEx.enableShiftingMode(false);
 //        bottomNavigationViewEx.setTextVisibility(false);
 
+        // TODO: need to figure out why icons won't have its respective color when selected
         // Notes: Temporary solution to indicate which icon is the current on the bottom navigation bar
         bottomNavigationViewEx.setTextVisibility(true);
 
@@ -66,7 +66,7 @@ public class BottomNavigationViewHelper {
 
                     // Notes: ACTIVITY_NUM = 3
                     case R.id.ic_notification:
-                        Intent intent4 = new Intent(context, NotificationActivity.class);
+                        Intent intent4 = new Intent(context, NotificationsActivity.class);
                         context.startActivity(intent4);
                         break;
 

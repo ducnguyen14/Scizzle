@@ -16,7 +16,7 @@
     <item
         android:id="@+id/ic_add"
         android:icon="@drawable/ic_add"
-        android:title="Add">
+        android:title="Share">
     </item>
 
     <item

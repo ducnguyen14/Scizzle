@@ -1,38 +1,37 @@
 package com.example.instaclone;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.instaclone.Utils.BottomNavigationViewHelper;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
+public class SearchActivity extends AppCompatActivity {
+    private static final String TAG = "SearchActivity/DEBUG";
+    private static final int ACTIVITY_NUM = 1;
 
-
-
-public class HomeActivity extends AppCompatActivity {
-
-    private static final String TAG = "HomeActivity/DEBUG";
-    private static final int ACTIVITY_NUM = 0;
-    private Context mContext = HomeActivity.this;
-
+    private Context mContext = SearchActivity.this;
 
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Log.d(TAG, "onCreate: Starting");
+        Log.d(TAG, "onCreate: started");
 
         setupBottomNavigationView();
     }
+
+
+
 
     /**
      * Notes: BottomNavigationView setup

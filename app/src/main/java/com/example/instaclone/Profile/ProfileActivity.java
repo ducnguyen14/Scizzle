@@ -27,7 +27,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         Log.d(TAG, "onCreate: started");
 
-//        setupBottomNavigationView();
+        setupBottomNavigationView();
         setupToolbar();
     }
 

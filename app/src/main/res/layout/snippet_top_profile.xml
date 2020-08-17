@@ -35,7 +35,7 @@
             android:id="@+id/tvFollowers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:text="300"
             android:textColor="@color/black"
             android:textSize="18sp"
@@ -48,6 +48,7 @@
             android:id="@+id/textFollowers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:text="Followers"
             android:textSize="12sp"
             app:layout_constraintEnd_toStartOf="@+id/textFollowing"
@@ -81,6 +82,8 @@
             android:id="@+id/textEditProfile"
             android:layout_width="228dp"
             android:layout_height="25dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/grey_border"
             android:text="Edit Your Profile"
             android:textAlignment="center"
             android:textColor="@color/black"
@@ -90,8 +93,7 @@
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textFollowers"
-            app:layout_constraintVertical_bias="0.03"
-            android:background="@drawable/grey_border"/>
+            app:layout_constraintVertical_bias="0.03" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

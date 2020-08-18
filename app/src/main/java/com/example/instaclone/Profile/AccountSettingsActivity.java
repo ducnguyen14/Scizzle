@@ -3,6 +3,8 @@ package com.example.instaclone.Profile;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,13 +17,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.instaclone.R;
+import com.example.instaclone.Utils.BottomNavigationViewHelper;
 import com.example.instaclone.Utils.SectionsStatePagerAdapter;
+import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import java.util.ArrayList;
 
 public class AccountSettingsActivity extends AppCompatActivity {
 
     private static final String TAG = "AcntSettingAct/DEBUG";
+    // Notes: ProfileActivity is 4
+    private static final int ACTIVITY_NUM = 4;
     private Context mContext;
 
     private SectionsStatePagerAdapter pagerAdapter;
@@ -41,6 +47,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
         // Notes: Set ups
         setupSettingsList();
+        setupBottomNavigationView();
         setupFragments();
 
 
@@ -72,6 +79,20 @@ public class AccountSettingsActivity extends AppCompatActivity {
     }
 
 
+    private void setViewPager(int fragmentNumber)
+    {
+        /*
+            Notes: In activity_accountsettings.xml, the ViewPager is included right above the
+                RelativeLayout, therefore we want to hide the RelativeLayout when inflating a fragment
+                on the ViewPager
+         */
+        mRelativelayout.setVisibility(View.GONE);
+
+        Log.d(TAG, "setViewPager: navigating to fragment #: " + fragmentNumber);
+        mViewPager.setAdapter(pagerAdapter);
+        mViewPager.setCurrentItem(fragmentNumber);
+    }
+
 
     private void setupSettingsList()
     {
@@ -99,24 +120,26 @@ public class AccountSettingsActivity extends AppCompatActivity {
                 setViewPager(position);
             }
         });
-
-
     }
 
-    private void setViewPager(int fragmentNumber)
+
+    /**
+     * Notes: BottomNavigationView setup
+     */
+    private void setupBottomNavigationView()
     {
-        /*
-            Notes: In activity_accountsettings.xml, the ViewPager is included right above the
-                RelativeLayout, therefore we want to hide the RelativeLayout when inflating a fragment
-                on the ViewPager
-         */
-        mRelativelayout.setVisibility(View.GONE);
+        Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
 
-        Log.d(TAG, "setViewPager: navigating to fragment #: " + fragmentNumber);
-        mViewPager.setAdapter(pagerAdapter);
-        mViewPager.setCurrentItem(fragmentNumber);
+        BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
+
+        BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationViewEx);
+
+        // Notes: Highlighting the correct Icon when navigating
+        Menu menu = bottomNavigationViewEx.getMenu();
+        MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
+        menuItem.setChecked(true);
     }
-
 
 
 }

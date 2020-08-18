@@ -12,10 +12,10 @@ import android.view.MenuItem;
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.BottomNavigationViewHelper;
 import com.example.instaclone.Utils.SectionsPagerAdapter;
+import com.example.instaclone.Utils.UniversalImageLoader;
 import com.google.android.material.tabs.TabLayout;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-
-
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -34,10 +34,23 @@ public class HomeActivity extends AppCompatActivity {
 
         Log.d(TAG, "onCreate: Starting");
 
+        initImageLoader();
+
         // Notes: Set ups
         setupBottomNavigationView();
         setupViewPager();
+
     }
+
+    /**
+     * Notes: Initialized the ImageLoader with its configurations
+     */
+    private void initImageLoader()
+    {
+        UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
+        ImageLoader.getInstance().init(universalImageLoader.getConfig());
+    }
+
 
     /**
      * Notes: BottomNavigationView setup

@@ -27,22 +27,26 @@ public class EditProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_editprofile, container, false);
         mProfilePhoto = (ImageView) view.findViewById(R.id.profile_photo);
 
-        initImageLoader();
         setProfileImage();
 
+        // Notes: Back arrow for navigating back to ProfileActivity
+        ImageView backArrow = (ImageView) view.findViewById(R.id.backArrow);
+        backArrow.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Log.d(TAG, "onClick: navigating back to ProfileActivity");
+                /*
+                    Notes: Because we are in a fragment, we need to use getActivity()
+                        The activity in this case is the AccountSettingsActivity
+                 */
+                getActivity().finish();
+            }
+        });
 
         return view;
     }
-
-    /**
-     * Notes: Initialized the ImageLoader with its configurations
-     */
-    private void initImageLoader()
-    {
-        UniversalImageLoader universalImageLoader = new UniversalImageLoader(getActivity());
-        ImageLoader.getInstance().init(universalImageLoader.getConfig());
-    }
-
 
 
     private void setProfileImage()

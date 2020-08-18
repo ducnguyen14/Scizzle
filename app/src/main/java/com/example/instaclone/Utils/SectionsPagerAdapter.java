@@ -1,4 +1,4 @@
-package com.example.instaclone.Home;
+package com.example.instaclone.Utils;
 
 import android.widget.ProgressBar;
 

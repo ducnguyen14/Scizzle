@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.BottomNavigationViewHelper;
+import com.example.instaclone.Utils.SectionsPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 

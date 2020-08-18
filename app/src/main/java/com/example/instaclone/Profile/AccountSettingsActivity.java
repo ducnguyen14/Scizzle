@@ -4,14 +4,18 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.instaclone.R;
+import com.example.instaclone.Utils.SectionsStatePagerAdapter;
 
 import java.util.ArrayList;
 
@@ -20,6 +24,10 @@ public class AccountSettingsActivity extends AppCompatActivity {
     private static final String TAG = "AcntSettingAct/DEBUG";
     private Context mContext;
 
+    private SectionsStatePagerAdapter pagerAdapter;
+    private ViewPager mViewPager;
+    private RelativeLayout mRelativelayout;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,10 +35,13 @@ public class AccountSettingsActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: started");
 
         mContext = AccountSettingsActivity.this;
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mRelativelayout = (RelativeLayout) findViewById(R.id.relLayout1);
 
 
         // Notes: Set ups
         setupSettingsList();
+        setupFragments();
 
 
         // Notes: backarrow OnClick for navigating back to ProfileActivity
@@ -50,22 +61,61 @@ public class AccountSettingsActivity extends AppCompatActivity {
     }
 
 
+    private void setupFragments()
+    {
+        pagerAdapter = new SectionsStatePagerAdapter(getSupportFragmentManager(), 1);
+
+        // Notes: Fragment 0
+        pagerAdapter.addFragment(new EditProfileFragment(), getString(R.string.edit_profile_fragment));
+        // Notes: Fragment 1
+        pagerAdapter.addFragment(new SignOutFragment(), getString(R.string.sign_out_fragment));
+    }
+
+
+
     private void setupSettingsList()
     {
         Log.d(TAG, "setupSettingsList: initializing 'Account Settings' list");
         ListView listView = (ListView) findViewById(R.id.lvAccountSettings);
 
         ArrayList<String> options = new ArrayList<>();
-        options.add(getString(R.string.edit_profile));
-        options.add(getString(R.string.sign_out));
+        // Notes" fragment 0
+        options.add(getString(R.string.edit_profile_fragment));
+        // Notes: fragment 1
+        options.add(getString(R.string.sign_out_fragment));
 
 
         ArrayAdapter adapter = new ArrayAdapter(mContext, android.R.layout.simple_list_item_1, options);
         listView.setAdapter(adapter);
 
 
+        // Notes: Navigating to fragments from the list options
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Log.d(TAG, "onItemClick: navigating to fragment #: " + position);
+                setViewPager(position);
+            }
+        });
+
+
     }
 
+    private void setViewPager(int fragmentNumber)
+    {
+        /*
+            Notes: In activity_accountsettings.xml, the ViewPager is included right above the
+                RelativeLayout, therefore we want to hide the RelativeLayout when inflating a fragment
+                on the ViewPager
+         */
+        mRelativelayout.setVisibility(View.GONE);
+
+        Log.d(TAG, "setViewPager: navigating to fragment #: " + fragmentNumber);
+        mViewPager.setAdapter(pagerAdapter);
+        mViewPager.setCurrentItem(fragmentNumber);
+    }
 
 
 

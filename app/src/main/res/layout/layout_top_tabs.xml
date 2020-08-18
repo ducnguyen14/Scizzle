@@ -13,13 +13,13 @@
         <!-- Notes: We can have a wrap content height because
                 the parent Relative Layout's height is already preset
                 to 50dp -->
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.tabs.TabLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tabs"
-            android:background="@drawable/white_grey_border_bottom">
+            android:background="@drawable/white_teagreen_border_bottom">
 
-        </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.tabs.TabLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 

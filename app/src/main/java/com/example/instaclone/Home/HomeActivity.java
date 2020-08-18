@@ -1,31 +1,39 @@
 package com.example.instaclone.Home;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.instaclone.Login.LoginActivity;
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.BottomNavigationViewHelper;
 import com.example.instaclone.Utils.SectionsPagerAdapter;
 import com.example.instaclone.Utils.UniversalImageLoader;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 
 public class HomeActivity extends AppCompatActivity {
 
+    // Notes: Constants
     private static final String TAG = "HomeActivity/DEBUG";
     private static final int ACTIVITY_NUM = 0;
     private Context mContext = HomeActivity.this;
 
 
-
+    // Notes: Firebase
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,13 +42,16 @@ public class HomeActivity extends AppCompatActivity {
 
         Log.d(TAG, "onCreate: Starting");
 
-        initImageLoader();
+
 
         // Notes: Set ups
+        setupFirebaseAuth();
+        initImageLoader();
         setupBottomNavigationView();
         setupViewPager();
 
     }
+
 
     /**
      * Notes: Initialized the ImageLoader with its configurations
@@ -96,6 +107,91 @@ public class HomeActivity extends AppCompatActivity {
         tabLayout.getTabAt(2).setIcon(R.drawable.ic_messages);
 
     }
+
+
+
+
+    /**
+     * ***************************** Firebase *****************************
+     */
+
+
+    /**
+     * Notes: Checks to see if the @param 'user' is looged in
+     */
+    private void checkCurrentUser(FirebaseUser user)
+    {
+        Log.d(TAG, "checkCurrentUser: checking if user is logged in");
+
+        if(user == null)
+        {
+            Intent intent = new Intent(mContext, LoginActivity.class);
+            startActivity(intent);
+        }
+
+
+    }
+
+
+
+
+
+    /**
+     * Notes: Setup the firebase auth object
+     */
+    private void setupFirebaseAuth()
+    {
+        Log.d(TAG, "setupFirebaseAuth: setting up firebase auth");
+
+        /*
+            Notes: FirebaseAuth works on an Instance basis,the same FirebaseAuth
+                object is usable app-wide
+         */
+        mAuth = FirebaseAuth.getInstance();
+
+        // Notes: Checks if a user state has changed --> Signed in or signed out
+        mAuthListener = new FirebaseAuth.AuthStateListener()
+        {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
+            {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                // Notes: Check if the user is logged in
+                checkCurrentUser(user);
+                if(user != null)
+                {
+                    // Notes: User is signed in
+                    Log.d(TAG, "onAuthStateChanged: signed in: " + user.getUid());
+                }
+                else
+                {
+                    // Notes: User is signed out
+                    Log.d(TAG, "onAuthStateChanged: signed out");
+                }
+            }
+        };
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+
+        if(mAuthListener != null)
+        {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+
+    }
+
 
 
 

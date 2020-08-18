@@ -2,6 +2,7 @@ package com.example.instaclone.Utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -16,14 +17,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 public class BottomNavigationViewHelper {
-    private static final String TAG = "BottomNavigationViewHel/DEBUG";
+    private static final String TAG = "BottomNavViewHel/DEBUG";
 
     /**
      * Notes: BottomNavigationView setup
      */
     public static void setupBottomNavigationView(BottomNavigationViewEx bottomNavigationViewEx)
     {
-//        Log.d(TAG, "setupBottomNavigationView: Setting up BottomNavigationView");
+        Log.d(TAG, "setupBottomNavigationView: Setting up BottomNavigationView");
         bottomNavigationViewEx.enableAnimation(false);
         bottomNavigationViewEx.enableItemShiftingMode(false);
         bottomNavigationViewEx.enableShiftingMode(false);

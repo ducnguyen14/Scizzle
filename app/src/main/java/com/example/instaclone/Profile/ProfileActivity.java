@@ -28,6 +28,10 @@ import java.util.ArrayList;
 public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "ProfileActivity/DEBUG";
     private static final int ACTIVITY_NUM = 4;
+    private static final int NUM_GRID_COLUMNS = 3;
+
+
+
 
     private Context mContext = ProfileActivity.this;
     private ProgressBar mProgressBar;
@@ -67,6 +71,14 @@ public class ProfileActivity extends AppCompatActivity {
     private void setupImageGrid(ArrayList<String> imgURLs)
     {
         GridView gridView = (GridView) findViewById(R.id.gridView);
+
+
+        // Notes: Fixing the scaling issue for when the images load
+        int gridWidth = getResources().getDisplayMetrics().widthPixels;
+        int imageWidth = gridWidth/NUM_GRID_COLUMNS;
+        // Notes: Setting the default width for the grid columns
+        gridView.setColumnWidth(imageWidth);
+
 
         // Notes: layout_grid_imageview is what gets recycled over and over
         GridImageAdapter adapter = new GridImageAdapter(mContext, R.layout.layout_grid_imageview, "", imgURLs);

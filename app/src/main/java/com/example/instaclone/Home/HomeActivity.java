@@ -33,6 +33,7 @@ public class HomeActivity extends AppCompatActivity {
 
         Log.d(TAG, "onCreate: Starting");
 
+        // Notes: Set ups
         setupBottomNavigationView();
         setupViewPager();
     }

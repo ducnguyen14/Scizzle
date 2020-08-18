@@ -15,7 +15,7 @@
             <include layout="@layout/snippet_top_profilebar"/>
         </RelativeLayout>
 
-        <!-- Notes: Middle Section () -->
+        <!-- Notes: Middle Section (Profile Pic + Posts/Followers/Following) -->
         <RelativeLayout
             android:id="@id/relLayout2"
             android:layout_width="match_parent"

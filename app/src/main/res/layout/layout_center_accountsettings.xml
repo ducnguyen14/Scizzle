@@ -8,7 +8,6 @@
         android:background="@color/white"
         >
 
-        <!-- TODO: Look into this grey_border_bottom-->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,8 +19,6 @@
 
         </TextView>
 
-        
-        
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"

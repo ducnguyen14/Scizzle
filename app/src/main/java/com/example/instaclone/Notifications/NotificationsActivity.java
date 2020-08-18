@@ -14,7 +14,7 @@ import com.example.instaclone.Utils.BottomNavigationViewHelper;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 public class NotificationsActivity extends AppCompatActivity {
-    private static final String TAG = "NotificationsActivity/DEBUG";
+    private static final String TAG = "NotificActivity/DEBUG";
     private static final int ACTIVITY_NUM = 3;
     private Context mContext = NotificationsActivity.this;
 
@@ -26,6 +26,7 @@ public class NotificationsActivity extends AppCompatActivity {
 
         Log.d(TAG, "onCreate: started");
 
+        // Notes: Set ups
         setupBottomNavigationView();
     }
 

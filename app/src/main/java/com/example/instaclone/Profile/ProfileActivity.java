@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 
 import androidx.annotation.Nullable;
@@ -21,7 +22,9 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = "ProfileActivity/DEBUG";
     private static final int ACTIVITY_NUM = 4;
+
     private Context mContext = ProfileActivity.this;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,6 +33,11 @@ public class ProfileActivity extends AppCompatActivity {
 
         Log.d(TAG, "onCreate: started");
 
+        // Notes: Hiding progressbar
+        mProgressBar = (ProgressBar) findViewById(R.id.profileProgressbar);
+        mProgressBar.setVisibility(View.GONE);
+
+        // Notes: Set ups
         setupBottomNavigationView();
         setupToolbar();
     }

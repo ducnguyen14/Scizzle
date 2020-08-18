@@ -28,6 +28,7 @@ public class SearchActivity extends AppCompatActivity {
 
         Log.d(TAG, "onCreate: started");
 
+        // Notes: Set ups
         setupBottomNavigationView();
     }
 

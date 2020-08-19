@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.instaclone.Home.HomeActivity;
 import com.example.instaclone.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -154,6 +155,35 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+        /*
+            Notes: Register new user section. User will still need to come back to
+                LoginActivity after creating an account, therefore do not use finish()
+         */
+        TextView linkSignUp = (TextView) findViewById(R.id.link_signup);
+        linkSignUp.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating to register screen");
+                Intent intent = new Intent(mContext, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+
+        /*
+            Notes: Navigating to HomeActivity if user is authenticated and logged in
+         */
+        if(mAuth.getCurrentUser() != null)
+        {
+            Intent intent = new Intent(mContext, HomeActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
     }
 
 

@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                 String password = mPassword.getText().toString();
 
                 // Notes: Checking if fields are null
-                if(isStringNull(email) == true && isStringNull(password) == true)
+                if(isStringNull(email) == true || isStringNull(password) == true)
                 {
                     Toast.makeText(mContext, "You must fill out all the fields", Toast.LENGTH_SHORT).show();
                 }

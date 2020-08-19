@@ -117,7 +117,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
     /**
-     * Notes: Checks to see if the @param 'user' is looged in
+     * Notes: Checks to see if the @param 'user' is logged in
      */
     private void checkCurrentUser(FirebaseUser user)
     {

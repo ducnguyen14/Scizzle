@@ -178,6 +178,10 @@ public class HomeActivity extends AppCompatActivity {
     {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+
+        // Notes: For whatever reason we may start this activity, we always check the user
+        checkCurrentUser(mAuth.getCurrentUser());
+
     }
 
     @Override

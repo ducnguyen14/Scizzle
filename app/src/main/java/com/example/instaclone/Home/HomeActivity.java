@@ -149,7 +149,7 @@ public class HomeActivity extends AppCompatActivity {
          */
         mAuth = FirebaseAuth.getInstance();
 
-        // Notes: Checks if a user state has changed --> Signed in or signed out
+        // Notes: Checks if a user auth state has changed --> Signed in or signed out
         mAuthListener = new FirebaseAuth.AuthStateListener()
         {
             @Override

@@ -18,6 +18,11 @@ import com.example.instaclone.R;
 import com.example.instaclone.Utils.FirebaseMethods;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity/DEBUG";
@@ -35,6 +40,11 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseMethods firebaseMethods;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference myRef;
+
+
+    private String append = "";
 
 
     @Override
@@ -73,7 +83,10 @@ public class RegisterActivity extends AppCompatActivity {
                     mProgressBar.setVisibility(View.VISIBLE);
                     loadingPleaseWait.setVisibility(View.VISIBLE);
 
-                    // Notes: Sign up
+                    /*
+                        Notes: Sign up section. The auth state will change to
+                            sign in if successful or signed out if unsuccessful
+                     */
                     firebaseMethods.registerNewEmail(email, password, username);
 
                 }
@@ -149,24 +162,65 @@ public class RegisterActivity extends AppCompatActivity {
         Log.d(TAG, "setupFirebaseAuth: setting up firebase auth");
 
         /*
-            Notes: FirebaseAuth works on an Instance basis,the same FirebaseAuth
+            Notes: FirebaseAuth and FirebaseDatabase works on an Instance basis,the same
                 object is usable app-wide
          */
         mAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
 
-        // Notes: Checks if a user state has changed --> Signed in or signed out
+        // Notes: Reference to database
+        myRef = mFirebaseDatabase.getReference();
+
+        // Notes: Checks if a user auth state has changed --> Signed in or signed out
         mAuthListener = new FirebaseAuth.AuthStateListener()
         {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
             {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                FirebaseUser user = firebaseAuth.getCurrentUser();1
 
 
                 if(user != null)
                 {
                     // Notes: User is signed in
                     Log.d(TAG, "onAuthStateChanged: signed in: " + user.getUid());
+
+                    myRef.addListenerForSingleValueEvent(new ValueEventListener()
+                    {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot)
+                        {
+                            // Notes: 1st Check - Make sure the username is not already taken
+                            if(firebaseMethods.checkIfUsernameExists(username, snapshot))
+                            {
+                                /*
+                                    Notes: The username already exists. Use myRef.push()
+                                        to generate a random key. These keys are very long,
+                                        so we just want from 3-10 indices
+                                 */
+                                append = myRef.push().getKey().substring(3, 10);
+                                Log.d(TAG, "onDataChange: username already exists. Appending random string to name: " + append);
+                            }
+
+                            username = username + append;
+
+
+                            // Notes: Add new user to the database
+
+
+                            // Notes: Add new user_account_settings to the database
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error)
+                        {
+
+                        }
+                    });
+
+
                 }
                 else
                 {

@@ -132,6 +132,9 @@ public class FirebaseMethods {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "\tcreateUserWithEmail:success");
 
+                            // Notes: Sending Verification email
+                            sendVerificationEmail();
+
                             userID = mAuth.getCurrentUser().getUid();
                             Log.d(TAG, "\tonComplete: Authstate changed " + userID);
 
@@ -143,6 +146,35 @@ public class FirebaseMethods {
     }
 
 
+    public void sendVerificationEmail()
+    {
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        if(user != null)
+        {
+            user.sendEmailVerification()
+                    .addOnCompleteListener(new OnCompleteListener<Void>()
+                    {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task)
+                        {
+                            // Notes: Not Successful
+                            if(!task.isSuccessful())
+                            {
+                                Toast.makeText(mContext, "Couldn't send verification email.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    }
+
+
+
+
+    /**
+     * Notes: Add information to the users nodes
+     *      Add information to the user_account_settings node.
+     */
     public void addNewUser(String email, String username, String description, String website, String profile_photo)
     {
         User user = new User(userID, 1, email, StringManipulation.condenseUsername(username));

@@ -84,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
                     loadingPleaseWait.setVisibility(View.VISIBLE);
 
                     /*
-                        Notes: Sign up section. The auth state will change to
+                        Notes: Register/Sign up section. The auth state will change to
                             sign in if successful or signed out if unsuccessful
                      */
                     firebaseMethods.registerNewEmail(email, password, username);
@@ -209,6 +209,12 @@ public class RegisterActivity extends AppCompatActivity {
 
                             Toast.makeText(mContext, "Signup Successful. Sending verification email", Toast.LENGTH_SHORT).show();
 
+                            /*
+                                Notes: Firebase automatically signs in new user, we want to sign out user until
+                                    user verified email.
+                             */
+                            mAuth.signOut();
+
 
                         }
 
@@ -219,7 +225,8 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     });
 
-
+                    // Notes: Navigating back to LoginActivity
+                    finish();
                 }
                 else
                 {

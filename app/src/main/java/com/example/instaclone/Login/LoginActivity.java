@@ -126,6 +126,9 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task)
                                 {
+                                    FirebaseUser user = mAuth.getCurrentUser();
+
+
                                     if (!task.isSuccessful())
                                     {
                                         // If sign in fails, display a message to the user.
@@ -137,15 +140,32 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                     else
                                     {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Log.d(TAG, "\tsignInWithEmail:success");
-                                        Toast.makeText(mContext, R.string.auth_success, Toast.LENGTH_SHORT).show();
+                                        // Notes: Possible NullPointerException for email
+                                        try
+                                        {
+                                            // Notes: Checking if email was verified
+                                            if(user.isEmailVerified())
+                                            {
+                                                Log.d(TAG, "\tonComplete: success. Email is verified");
+                                                Intent intent = new Intent(mContext, HomeActivity.class);
+                                                startActivity(intent);
+                                            }
+                                            else
+                                            {
+                                                Toast.makeText(mContext, "Email is not verified\nCheck email inbox", Toast.LENGTH_SHORT).show();
+                                                mPleaseWait.setVisibility(View.GONE);
+                                                mProgressBar.setVisibility(View.GONE);
 
-                                        mPleaseWait.setVisibility(View.GONE);
-                                        mProgressBar.setVisibility(View.GONE);
+                                                // Notes: Signing out to make sure user needs to verify email first
+                                                mAuth.signOut();
+                                            }
 
+                                        }
+                                        catch (NullPointerException e)
+                                        {
+                                            Log.e(TAG, "onComplete: NullPointerException: " + e.getMessage());
+                                        }
 
-                                        FirebaseUser user = mAuth.getCurrentUser();
                                     }
 
                                     // ...

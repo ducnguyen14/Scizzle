@@ -53,7 +53,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
         // Notes: TODO - Temporary Sign Out
-        mAuth.signOut();
+//        mAuth.signOut();
 
     }
 

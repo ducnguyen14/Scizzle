@@ -38,7 +38,7 @@ public class NotificationsActivity extends AppCompatActivity {
      */
     private void setupBottomNavigationView()
     {
-        Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
+        Log.d(TAG, "\tsetupBottomNavigationView: setting up BottomNavigationView");
 
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);

@@ -91,7 +91,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setProfileImage()
     {
-        Log.d(TAG, "setProfileImage: setting profile photo");
+        Log.d(TAG, "\tsetProfileImage: setting profile photo");
         String imgURL = "i.pinimg.com/originals/19/58/7f/19587f4696f74eeea6f387816b9bff88.jpg";
         UniversalImageLoader.setimage(imgURL,profilePhoto, mProgressBar, "https://");
     }
@@ -112,7 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
      */
     private void setupBottomNavigationView()
     {
-        Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
+        Log.d(TAG, "\tsetupBottomNavigationView: setting up BottomNavigationView");
 
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
@@ -139,7 +139,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                Log.d(TAG, "onClick: navigating to account settings.");
+                Log.d(TAG, "\tonClick: navigating to account settings.");
                 Intent intent = new Intent(mContext, AccountSettingsActivity.class);
                 startActivity(intent);
 

@@ -16,7 +16,7 @@ import com.example.instaclone.Utils.UniversalImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class EditProfileFragment extends Fragment {
-    private static final String TAG = "EditProfileFragment/DEBUG";
+    private static final String TAG = "EditProfileFrag/DEBUG";
 
     private ImageView mProfilePhoto;
 
@@ -36,7 +36,7 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onClick(View v)
             {
-                Log.d(TAG, "onClick: navigating back to ProfileActivity");
+                Log.d(TAG, "\tonClick: navigating back to ProfileActivity");
                 /*
                     Notes: Because we are in a fragment, we need to use getActivity()
                         The activity in this case is the AccountSettingsActivity
@@ -51,7 +51,7 @@ public class EditProfileFragment extends Fragment {
 
     private void setProfileImage()
     {
-        Log.d(TAG, "setProfileImage: setting profile image");
+        Log.d(TAG, "\tsetProfileImage: setting profile image");
 
         String imgURL = "i.pinimg.com/originals/19/58/7f/19587f4696f74eeea6f387816b9bff88.jpg";
         UniversalImageLoader.setimage(imgURL,mProfilePhoto, null, "https://");

@@ -58,7 +58,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                Log.d(TAG, "onClick: navigating back to 'ProfileActivity");
+                Log.d(TAG, "\tonClick: navigating back to 'ProfileActivity");
                 finish();
             }
         });
@@ -88,7 +88,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
          */
         mRelativelayout.setVisibility(View.GONE);
 
-        Log.d(TAG, "setViewPager: navigating to fragment #: " + fragmentNumber);
+        Log.d(TAG, "\tsetViewPager: navigating to fragment #: " + fragmentNumber);
         mViewPager.setAdapter(pagerAdapter);
         mViewPager.setCurrentItem(fragmentNumber);
     }
@@ -96,7 +96,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
     private void setupSettingsList()
     {
-        Log.d(TAG, "setupSettingsList: initializing 'Account Settings' list");
+        Log.d(TAG, "\tsetupSettingsList: initializing 'Account Settings' list");
         ListView listView = (ListView) findViewById(R.id.lvAccountSettings);
 
         ArrayList<String> options = new ArrayList<>();
@@ -116,7 +116,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                Log.d(TAG, "onItemClick: navigating to fragment #: " + position);
+                Log.d(TAG, "\tonItemClick: navigating to fragment #: " + position);
                 setViewPager(position);
             }
         });
@@ -128,7 +128,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
      */
     private void setupBottomNavigationView()
     {
-        Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
+        Log.d(TAG, "\tsetupBottomNavigationView: setting up BottomNavigationView");
 
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);

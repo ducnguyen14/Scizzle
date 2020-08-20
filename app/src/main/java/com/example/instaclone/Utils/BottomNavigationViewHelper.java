@@ -17,14 +17,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 public class BottomNavigationViewHelper {
-    private static final String TAG = "BottomNavViewHel/DEBUG";
+    private static final String TAG = "BottomNavViewHelp/DEBUG";
 
     /**
      * Notes: BottomNavigationView setup
      */
     public static void setupBottomNavigationView(BottomNavigationViewEx bottomNavigationViewEx)
     {
-        Log.d(TAG, "setupBottomNavigationView: Setting up BottomNavigationView");
+        Log.d(TAG, "\tsetupBottomNavigationView: Setting up BottomNavigationView");
         bottomNavigationViewEx.enableAnimation(false);
         bottomNavigationViewEx.enableItemShiftingMode(false);
         bottomNavigationViewEx.enableShiftingMode(false);

@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">InstaClone</string>
+
+
+
+    <!-- Notes: Fragment Names -->
     <string name="edit_profile_fragment">Edit Profile</string>
     <string name="sign_out_fragment">Sign Out</string>
 
@@ -9,6 +13,14 @@
     <!-- Notes: Firebase Messages -->
     <string name="auth_failed">Failed to Authenticate</string>
     <string name="auth_success">Authentication Success</string>
+
+
+
+
+    <!-- Notes: Firebase Database Fields -->
+    <string name="dbname_users">users</string>
+    <string name="dbname_user_account_settings">user_account_settings</string>
+
 
 
 

@@ -99,7 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private boolean checkInputs(String email, String username, String password)
     {
-        Log.d(TAG, "checkInputs: checking inputs for null values.");
+        Log.d(TAG, "\tcheckInputs: checking inputs for null values.");
         if(isStringNull(email) || isStringNull(username) || isStringNull(password))
         {
             Toast.makeText(mContext, "All fields must be filled out", Toast.LENGTH_SHORT).show();
@@ -117,7 +117,7 @@ public class RegisterActivity extends AppCompatActivity {
      */
     private void initWidgets()
     {
-        Log.d(TAG, "initWidgets: Initializing Widgets");
+        Log.d(TAG, "\tinitWidgets: Initializing Widgets");
         mEmail = (EditText) findViewById(R.id.input_email);
         mUsername = (EditText) findViewById(R.id.input_username);
         btnRegister = (Button) findViewById(R.id.btn_register);
@@ -134,7 +134,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private boolean isStringNull(String string)
     {
-        Log.d(TAG, "isStringNull: checking string if null");
+        Log.d(TAG, "\tisStringNull: checking string if null");
 
         if(string.equals(""))
         {
@@ -159,7 +159,7 @@ public class RegisterActivity extends AppCompatActivity {
      */
     private void setupFirebaseAuth()
     {
-        Log.d(TAG, "setupFirebaseAuth: setting up firebase auth");
+        Log.d(TAG, "\tsetupFirebaseAuth: setting up firebase auth");
 
         /*
             Notes: FirebaseAuth and FirebaseDatabase works on an Instance basis,the same
@@ -177,13 +177,13 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
             {
-                FirebaseUser user = firebaseAuth.getCurrentUser();1
+                FirebaseUser user = firebaseAuth.getCurrentUser();
 
 
                 if(user != null)
                 {
                     // Notes: User is signed in
-                    Log.d(TAG, "onAuthStateChanged: signed in: " + user.getUid());
+                    Log.d(TAG, "\tonAuthStateChanged: signed in: " + user.getUid());
 
                     myRef.addListenerForSingleValueEvent(new ValueEventListener()
                     {
@@ -199,16 +199,15 @@ public class RegisterActivity extends AppCompatActivity {
                                         so we just want from 3-10 indices
                                  */
                                 append = myRef.push().getKey().substring(3, 10);
-                                Log.d(TAG, "onDataChange: username already exists. Appending random string to name: " + append);
+                                Log.d(TAG, "\tonDataChange: username already exists. Appending random string to name: " + append);
                             }
 
                             username = username + append;
 
-
                             // Notes: Add new user to the database
+                            firebaseMethods.addNewUser(email, username, "", "", "");
 
-
-                            // Notes: Add new user_account_settings to the database
+                            Toast.makeText(mContext, "Signup Successful. Sending verification email", Toast.LENGTH_SHORT).show();
 
 
                         }

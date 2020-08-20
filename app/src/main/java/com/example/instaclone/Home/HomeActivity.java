@@ -50,6 +50,11 @@ public class HomeActivity extends AppCompatActivity {
         setupBottomNavigationView();
         setupViewPager();
 
+
+
+        // Notes: TODO - Temporary Sign Out
+        mAuth.signOut();
+
     }
 
 
@@ -68,7 +73,7 @@ public class HomeActivity extends AppCompatActivity {
      */
     private void setupBottomNavigationView()
     {
-        Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
+        Log.d(TAG, "\tsetupBottomNavigationView: setting up BottomNavigationView");
 
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
@@ -121,7 +126,7 @@ public class HomeActivity extends AppCompatActivity {
      */
     private void checkCurrentUser(FirebaseUser user)
     {
-        Log.d(TAG, "checkCurrentUser: checking if user is logged in");
+        Log.d(TAG, "\tcheckCurrentUser: checking if user is logged in");
 
         if(user == null)
         {
@@ -141,7 +146,7 @@ public class HomeActivity extends AppCompatActivity {
      */
     private void setupFirebaseAuth()
     {
-        Log.d(TAG, "setupFirebaseAuth: setting up firebase auth");
+        Log.d(TAG, "\tsetupFirebaseAuth: setting up firebase auth");
 
         /*
             Notes: FirebaseAuth works on an Instance basis,the same FirebaseAuth
@@ -162,12 +167,12 @@ public class HomeActivity extends AppCompatActivity {
                 if(user != null)
                 {
                     // Notes: User is signed in
-                    Log.d(TAG, "onAuthStateChanged: signed in: " + user.getUid());
+                    Log.d(TAG, "\tonAuthStateChanged: signed in: " + user.getUid());
                 }
                 else
                 {
                     // Notes: User is signed out
-                    Log.d(TAG, "onAuthStateChanged: signed out");
+                    Log.d(TAG, "\tonAuthStateChanged: signed out");
                 }
             }
         };

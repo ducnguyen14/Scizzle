@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isStringNull(String string)
     {
-        Log.d(TAG, "isStringNull: checking string if null");
+        Log.d(TAG, "\tisStringNull: checking string if null");
 
         if(string.equals(""))
         {
@@ -94,6 +94,8 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void init()
     {
+        Log.d(TAG, "\tinit: started");
+
         // Notes: Initialize the button for logging in
         Button btnLogin = (Button) findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener()
@@ -101,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                Log.d(TAG, "onClick: attempting to log in.");
+                Log.d(TAG, "\tonClick: attempting to log in.");
 
                 String email = mEmail.getText().toString();
                 String password = mPassword.getText().toString();
@@ -127,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
                                     if (!task.isSuccessful())
                                     {
                                         // If sign in fails, display a message to the user.
-                                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                        Log.w(TAG, "\tsignInWithEmail:failure", task.getException());
                                         Toast.makeText(mContext, R.string.auth_failed, Toast.LENGTH_SHORT).show();
 
                                         mPleaseWait.setVisibility(View.GONE);
@@ -136,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
                                     else
                                     {
                                         // Sign in success, update UI with the signed-in user's information
-                                        Log.d(TAG, "signInWithEmail:success");
+                                        Log.d(TAG, "\tsignInWithEmail:success");
                                         Toast.makeText(mContext, R.string.auth_success, Toast.LENGTH_SHORT).show();
 
                                         mPleaseWait.setVisibility(View.GONE);
@@ -166,7 +168,7 @@ public class LoginActivity extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: navigating to register screen");
+                Log.d(TAG, "\tonClick: navigating to register screen");
                 Intent intent = new Intent(mContext, RegisterActivity.class);
                 startActivity(intent);
             }
@@ -195,7 +197,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void setupFirebaseAuth()
     {
-        Log.d(TAG, "setupFirebaseAuth: setting up firebase auth");
+        Log.d(TAG, "\tsetupFirebaseAuth: setting up firebase auth");
 
         /*
             Notes: FirebaseAuth works on an Instance basis,the same FirebaseAuth
@@ -215,12 +217,12 @@ public class LoginActivity extends AppCompatActivity {
                 if(user != null)
                 {
                     // Notes: User is signed in
-                    Log.d(TAG, "onAuthStateChanged: signed in: " + user.getUid());
+                    Log.d(TAG, "\tonAuthStateChanged: signed in: " + user.getUid());
                 }
                 else
                 {
                     // Notes: User is signed out
-                    Log.d(TAG, "onAuthStateChanged: signed out");
+                    Log.d(TAG, "\tonAuthStateChanged: signed out");
                 }
             }
         };

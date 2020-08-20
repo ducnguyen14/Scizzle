@@ -245,7 +245,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop()
+    public void onStop()
     {
         super.onStop();
 

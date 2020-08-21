@@ -6,6 +6,7 @@
     <!-- Notes: Fragment Names -->
     <string name="edit_profile_fragment">Edit Profile</string>
     <string name="sign_out_fragment">Sign Out</string>
+    <string name="profile_fragment">Profile</string>
 
 
 

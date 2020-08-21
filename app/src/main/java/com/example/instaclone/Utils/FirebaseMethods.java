@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import com.example.instaclone.R;
 import com.example.instaclone.models.User;
 import com.example.instaclone.models.UserAccountSettings;
+import com.example.instaclone.models.UserSettings;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -193,7 +194,15 @@ public class FirebaseMethods {
                 .setValue(user);
 
         // Notes: Universal Image Loader can handle an empty string, it will load the default image
-        UserAccountSettings settings = new UserAccountSettings(description, username, 0, 0, 0, profile_photo, username, website);
+        UserAccountSettings settings = new UserAccountSettings(
+                description,
+                username,
+                0,
+                0,
+                0,
+                profile_photo,
+                StringManipulation.condenseUsername(username),
+                website);
 
         // Notes: Inserting user_account_settings into Firebase Database.
         myRef.child(mContext.getString(R.string.dbname_user_account_settings))
@@ -204,7 +213,131 @@ public class FirebaseMethods {
 
     }
 
+    /**
+     * Notes: This method retrieves the account settings for the user currently logged in
+     *      from the user_account_settings node
+     * @param dataSnapshot
+     * @return
+     */
 
+    private UserSettings getUserAccountSettings(DataSnapshot dataSnapshot)
+    {
+        Log.d(TAG, "\tgetUserAccountSettings: retrieviing user account settings from firebase");
+
+
+        UserAccountSettings settings = new UserAccountSettings();
+        User user = new User();
+
+        // Notes: Looping through the major nodes
+        for(DataSnapshot ds: dataSnapshot.getChildren())
+        {
+            // Notes: if ds.getKey() == user_account_settings node
+            if(ds.getKey().equals(mContext.getString(R.string.dbname_user_account_settings)))
+            {
+                Log.d(TAG, "\tgetUserAccountSettings: datasnapshot: " + ds);
+
+                // Notes: Try-Catch just in case of null fields
+                try
+                {
+                    settings.setDisplay_name(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getDisplay_name()
+                    );
+                    settings.setUsername(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getUsername()
+                    );
+                    settings.setWebsite(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getWebsite()
+                    );
+                    settings.setDescription(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getDescription()
+                    );
+                    settings.setProfile_photo(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getProfile_photo()
+                    );
+                    settings.setPosts(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getPosts()
+                    );
+                    settings.setFollowing(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getFollowing()
+                    );
+                    settings.setFollowers(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getFollowers()
+                    );
+
+                    Log.d(TAG, "\tgetUserAccountSettings: retrieved user_account_settings information" + settings.toString());
+                }
+                catch (NullPointerException e)
+                {
+                    Log.e(TAG, "\tgetUserAccountSettings: " + e.getMessage());
+                }
+            }
+
+            // Notes: if ds.getKey() == users node
+            if(ds.getKey().equals(mContext.getString(R.string.dbname_users)))
+            {
+                Log.d(TAG, "\tgetUserAccountSettings: datasnapshot: " + ds);
+
+                try {
+                    user.setUsername(
+                            ds.child(userID)
+                                    .getValue(User.class)
+                                    .getUsername()
+                    );
+                    user.setEmail(
+                            ds.child(userID)
+                                    .getValue(User.class)
+                                    .getEmail()
+                    );
+                    user.setPhone_number(
+                            ds.child(userID)
+                                    .getValue(User.class)
+                                    .getPhone_number()
+                    );
+                    user.setUser_id(
+                            ds.child(userID)
+                                    .getValue(User.class)
+                                    .getUser_id()
+                    );
+
+                    Log.d(TAG, "\tgetUserAccountSettings: retrieved users information" + user.toString());
+
+
+                }
+                catch (NullPointerException e)
+                {
+                    Log.e(TAG, "\tgetUserAccountSettings: " + e.getMessage());
+
+                }
+
+
+
+            }
+
+
+
+        }
+
+
+        return new UserSettings(user, settings);
+
+
+    }
 
 
 

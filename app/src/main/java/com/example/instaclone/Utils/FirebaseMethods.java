@@ -220,7 +220,7 @@ public class FirebaseMethods {
      * @return
      */
 
-    private UserSettings getUserAccountSettings(DataSnapshot dataSnapshot)
+    public UserSettings getUserSettings(DataSnapshot dataSnapshot)
     {
         Log.d(TAG, "\tgetUserAccountSettings: retrieviing user account settings from firebase");
 

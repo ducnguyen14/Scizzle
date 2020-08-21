@@ -22,6 +22,11 @@ import androidx.fragment.app.Fragment;
 import com.example.instaclone.Login.LoginActivity;
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.BottomNavigationViewHelper;
+import com.example.instaclone.Utils.FirebaseMethods;
+import com.example.instaclone.Utils.UniversalImageLoader;
+import com.example.instaclone.models.User;
+import com.example.instaclone.models.UserAccountSettings;
+import com.example.instaclone.models.UserSettings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,6 +48,7 @@ public class ProfileFragment extends Fragment
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
+    private FirebaseMethods mFirebaseMethods;
 
 
 
@@ -79,6 +85,7 @@ public class ProfileFragment extends Fragment
         profileMenu = (ImageView) view.findViewById(R.id.profileMenu);
         bottomNavigationView = (BottomNavigationViewEx) view.findViewById(R.id.bottomNavViewBar);
         mContext = getActivity();
+        mFirebaseMethods = new FirebaseMethods(mContext);
         Log.d(TAG, "onCreateView: stared.");
 
 
@@ -87,10 +94,36 @@ public class ProfileFragment extends Fragment
         setupBottomNavigationView();
         setupToolbar();
 
+        setupFirebaseAuth();
 
 
         return view;
     }
+
+
+    private void setProfileWidgets(UserSettings userSettings)
+    {
+        Log.d(TAG, "\tsetProfileWidgets: setting widgets with data retrieving from firebase database: " + userSettings.toString());
+
+//        User user = userSettings.getUser();
+        UserAccountSettings settings = userSettings.getSettings();
+
+        // Notes: If the image is null, UniversalImageLoader will set default image
+        UniversalImageLoader.setimage(settings.getProfile_photo(), mProfilePhoto, null, "");
+
+
+
+        mDisplayName.setText(settings.getDisplay_name());
+        mUsername.setText(settings.getUsername());
+        mWebsite.setText(settings.getWebsite());
+        mDescription.setText(settings.getDescription());
+        mPosts.setText(String.valueOf(settings.getPosts()));
+        mFollowing.setText(String.valueOf(settings.getFollowing()));
+        mFollowers.setText(String.valueOf(settings.getFollowers()));
+        mProgressBar.setVisibility(View.GONE);
+
+    }
+
 
     private void setupToolbar()
     {
@@ -182,7 +215,8 @@ public class ProfileFragment extends Fragment
             public void onDataChange(@NonNull DataSnapshot snapshot)
             {
                 // Notes: Retrieve user's info from database
-
+                // Notes: TODO - Rewrite this line for easier read
+                setProfileWidgets(mFirebaseMethods.getUserSettings(snapshot));
 
                 // Notes: Retrieve user's images from database
 
@@ -193,7 +227,7 @@ public class ProfileFragment extends Fragment
             {
 
             }
-        })
+        });
 
 
 

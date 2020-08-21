@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.FirebaseMethods;
 import com.example.instaclone.Utils.UniversalImageLoader;
+import com.example.instaclone.models.User;
 import com.example.instaclone.models.UserAccountSettings;
 import com.example.instaclone.models.UserSettings;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,6 +41,7 @@ public class EditProfileFragment extends Fragment {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private FirebaseMethods mFirebaseMethods;
+    private String userID;
 
     //Notes: EditProfile Fragment widgets
     private EditText mDisplayName, mUsername, mWebsite, mDescription, mEmail, mPhoneNumber;
@@ -62,10 +64,7 @@ public class EditProfileFragment extends Fragment {
         mChangeProfilePhoto = (TextView) view.findViewById(R.id.changeProfilePhoto);
         mFirebaseMethods = new FirebaseMethods(getActivity());
 
-
-
-        // Notes: Commented out because now we will be retrieving from database
-//        setProfileImage();
+        // Notes: This method will also sets the widgets, profile pic, etc.
         setupFirebaseAuth();
 
         // Notes: Back arrow for navigating back to ProfileActivity
@@ -87,15 +86,61 @@ public class EditProfileFragment extends Fragment {
         return view;
     }
 
-//
-//    private void setProfileImage()
-//    {
-//        Log.d(TAG, "\tsetProfileImage: setting profile image");
-//
-//        String imgURL = "i.pinimg.com/originals/19/58/7f/19587f4696f74eeea6f387816b9bff88.jpg";
-//        UniversalImageLoader.setimage(imgURL,mProfilePhoto, null, "https://");
-//
-//    }
+    /**
+     * Notes: Retrieves the data contained in the widgets and submits it to the database.
+     *      before submitting, it will check to make sure the username and email chosen are unique.
+     */
+    private void saveProfileSettings()
+    {
+        final String displayName = mDisplayName.getText().toString();
+        final String username = mUsername.getText().toString();
+        final String website = mWebsite.getText().toString();
+        final String description = mDescription.getText().toString();
+        final String email = mEmail.getText().toString();
+        final long phoneNumber = Long.parseLong(mPhoneNumber.getText().toString());
+
+
+        // Notes: Listens once compared to addValueEventListener() which always listens
+        myRef.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                User user = new User();
+
+                for(DataSnapshot ds:  dataSnapshot.child(getString(R.string.dbname_users)).getChildren())
+                {
+                    // Notes: Use the user's UID to search for what their username is
+                    if(ds.getKey().equals(userID))
+                    {
+                        // Notes: Found the user we're looking for
+                        user.setUsername(ds.getValue(User.class).getUsername());
+                    }
+                }
+                Log.d(TAG, "\tonDataChange: CURRENT USERNAME: " + user.getUsername());
+
+                // Notes: case1 - the user did not change their username
+                if(user.getUsername().equals(username))
+                {
+
+                }
+                // Notes: case2 - the user changed their username therefore we need to check for uniqueness
+                else{
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+
 
     private void setProfileWidgets(UserSettings userSettings)
     {
@@ -138,7 +183,7 @@ public class EditProfileFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
-
+        userID = mAuth.getCurrentUser().getUid();
 
 
         // Notes: Checks if a user auth state has changed --> Signed in or signed out

@@ -86,6 +86,7 @@ public class ProfileFragment extends Fragment
         bottomNavigationView = (BottomNavigationViewEx) view.findViewById(R.id.bottomNavViewBar);
         mContext = getActivity();
         mFirebaseMethods = new FirebaseMethods(mContext);
+        TextView editProfile = (TextView) view.findViewById(R.id.textEditProfile);
         Log.d(TAG, "onCreateView: stared.");
 
 
@@ -95,6 +96,23 @@ public class ProfileFragment extends Fragment
         setupToolbar();
 
         setupFirebaseAuth();
+
+        editProfile.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Log.d(TAG, "\tonClick: navigating to " + mContext.getString(R.string.edit_profile_fragment));
+
+                // Notes: Need to navigate to AccountSettingsActivity, then to EditProfileFragment
+                Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
+                intent.putExtra(getString(R.string.calling_activity), getString(R.string.profile_activity));
+                startActivity(intent);
+
+                // Notes: Don't call finish() because we want to be able to navigate back to this activity
+            }
+        });
+
 
 
         return view;

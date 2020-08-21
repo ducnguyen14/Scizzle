@@ -1,6 +1,7 @@
 package com.example.instaclone.Profile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -49,6 +50,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
         setupSettingsList();
         setupBottomNavigationView();
         setupFragments();
+        getIncomingIntent();
 
 
         // Notes: backarrow OnClick for navigating back to ProfileActivity
@@ -65,6 +67,21 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
 
         
+    }
+
+
+
+    private void getIncomingIntent()
+    {
+        Intent intent = getIntent();
+
+        // Notes: TODO - try to rewrite this for easier understanding
+        if(intent.hasExtra(getString(R.string.calling_activity)))
+        {
+            Log.d(TAG, "getIncomingIntent: received incoming intent from " + getString(R.string.profile_activity));
+            setViewPager(pagerAdapter.getFragmentNumber(getString(R.string.edit_profile_fragment)));
+        }
+
     }
 
 

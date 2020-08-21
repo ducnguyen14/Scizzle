@@ -24,5 +24,14 @@
 
 
 
+    <!-- Notes: Intent Extras -->
+    <string name="calling_activity">calling_activity</string>
+
+    <!-- Notes: Activity Names -->
+    <string name="profile_activity">Profile Activity</string>
+
+
+
+
 
 </resources>

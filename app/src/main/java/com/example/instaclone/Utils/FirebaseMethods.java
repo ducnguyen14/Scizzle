@@ -50,6 +50,9 @@ public class FirebaseMethods {
     }
 
 
+    /**
+     *  Notes: Update the email in the users node and user_account_settings node
+     */
     public void updateUsername(String username)
     {
         Log.d(TAG, "\tupdateUsername: updating username to: " + username);
@@ -63,6 +66,20 @@ public class FirebaseMethods {
                 .child(userID)
                 .child(mContext.getString(R.string.field_username))
                 .setValue(username);
+    }
+
+    /**
+     *  Notes: Update the email in the users node
+     */
+    public void updateEmail(String email)
+    {
+        Log.d(TAG, "\tupdateEmail: updating email to: " + email);
+
+        myRef.child(mContext.getString(R.string.dbname_users))
+                .child(userID)
+                .child(mContext.getString(R.string.field_email))
+                .setValue(email);
+
     }
 
 

@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.FirebaseMethods;
 import com.example.instaclone.Utils.UniversalImageLoader;
+import com.example.instaclone.dialogs.ConfirmPasswordDialog;
 import com.example.instaclone.models.User;
 import com.example.instaclone.models.UserAccountSettings;
 import com.example.instaclone.models.UserSettings;
@@ -123,33 +124,32 @@ public class EditProfileFragment extends Fragment {
         final long phoneNumber = Long.parseLong(mPhoneNumber.getText().toString());
 
 
-        // Notes: Listens once compared to addValueEventListener() which always listens
-        myRef.addListenerForSingleValueEvent(new ValueEventListener()
+        // Notes: case1 - If the user made a change to their username
+        if(!mUserSettings.getUser().getUsername().equals(username))
         {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
+            checkIfUsernameExists(username);
+        }
+        // Notes: case2 - If the user made a change to their email
+        if(!mUserSettings.getUser().getEmail().equals(email))
+        {
+            /*
+                Notes: Step 1 - Reauthenticate
+                            - Confirm the password and email
+            */
+
+            ConfirmPasswordDialog dialog = new ConfirmPasswordDialog();
+            dialog.show(getFragmentManager(), getString(R.string.confirm_password_dialog));
+
+            /*
+                Notes: Step 2 - Check if email already is registered
+                            - Use method fetchProvidersForEmail(String email)
+                       Step 3 - Change the email
+                            - Submit the new email to the database and authentication
+             */
+        }
 
 
 
-                // Notes: case1 - the user did not change their username
-                if(!mUserSettings.getUser().getUsername().equals(username))
-                {
-                    checkIfUsernameExists(username);
-                }
-                // Notes: case2 - the user changed their username therefore we need to check for uniqueness
-                else{
-
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
 

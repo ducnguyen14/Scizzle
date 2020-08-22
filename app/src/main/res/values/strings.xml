@@ -9,6 +9,8 @@
     <string name="profile_fragment">Profile</string>
 
 
+    <!-- Notes: Dialog Names -->
+    <string name="confirm_password_dialog">ConfirmPasswordDialog</string>
 
 
     <!-- Notes: Firebase Messages -->

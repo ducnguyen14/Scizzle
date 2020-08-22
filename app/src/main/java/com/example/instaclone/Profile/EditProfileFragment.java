@@ -33,7 +33,20 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class EditProfileFragment extends Fragment {
+public class EditProfileFragment extends Fragment implements ConfirmPasswordDialog.OnConfirmPasswordListener{
+
+
+    // Notes: Interface implementation
+    @Override
+    public void onConfirmPassword(String password)
+    {
+        // Notes: TODO - delete this log, not good to show password
+        Log.d(TAG, "\tonConfirmPassword: got the password: " + password);
+    }
+
+
+
+
     private static final String TAG = "EditProfileFrag/DEBUG";
 
 
@@ -139,6 +152,9 @@ public class EditProfileFragment extends Fragment {
 
             ConfirmPasswordDialog dialog = new ConfirmPasswordDialog();
             dialog.show(getFragmentManager(), getString(R.string.confirm_password_dialog));
+
+            // Notes: This allows passing variables from interface directly to fragment
+            dialog.setTargetFragment(EditProfileFragment.this, 1);
 
             /*
                 Notes: Step 2 - Check if email already is registered

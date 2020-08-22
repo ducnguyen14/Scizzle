@@ -16,12 +16,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.FirebaseMethods;
+import com.example.instaclone.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -155,6 +157,83 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     /**
+     * Notes: Check if @param username already exists in the database
+     * @param username
+     */
+    private void checkIfUsernameExists(final String username)
+    {
+        Log.d(TAG, "\tcheckIfUsernameExists: Checking if " + username + "already exists");
+
+        // Notes: TODO - I think there's a DatabaseReferece declared and initialized in setupFirebaseAuth()
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        Query query = reference
+                // Notes: Looking for the node that contains the object we're looking for
+                .child(getString(R.string.dbname_users))
+                // Notes: Looking for field that is inside the object
+                .orderByChild(getString(R.string.field_username))
+                .equalTo(username);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            /*
+             * Notes: This method returns a DataSnapshot only if a match was found
+             * @param snapshot
+             */
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                // Notes: Only returned a single item from the database
+                for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                {
+                    // Notes: Match Found - 1st Check - Make sure the username is not already taken
+                    if(singleSnapshot.exists())
+                    {
+                        Log.d(TAG, "\tonDataChange: FOUND A MATCH: " + singleSnapshot.getValue(User.class).getUsername());
+
+                        /*
+                            Notes: The username already exists. Use myRef.push()
+                                to generate a random key. These keys are very long,
+                                so we just want from 3-10 indices
+                        */
+                        append = myRef.push().getKey().substring(3, 10);
+                        Log.d(TAG, "\tonDataChange: username already exists. Appending random string to name: " + append);
+
+                    }
+                }
+
+                String mUsername = "";
+
+                mUsername = username + append;
+
+                // Notes: Add new user to the database
+                firebaseMethods.addNewUser(email, mUsername, "", "", "");
+
+                Toast.makeText(mContext, "Signup Successful. Sending verification email", Toast.LENGTH_SHORT).show();
+
+                            /*
+                                Notes: Firebase automatically signs in new user, we want to sign out user until
+                                    user verified email.
+                             */
+                mAuth.signOut();
+
+
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+    }
+
+
+    /**
      * Notes: Setup the firebase auth object
      */
     private void setupFirebaseAuth()
@@ -190,32 +269,7 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot)
                         {
-                            // Notes: 1st Check - Make sure the username is not already taken
-                            if(firebaseMethods.checkIfUsernameExists(username, snapshot))
-                            {
-                                /*
-                                    Notes: The username already exists. Use myRef.push()
-                                        to generate a random key. These keys are very long,
-                                        so we just want from 3-10 indices
-                                 */
-                                append = myRef.push().getKey().substring(3, 10);
-                                Log.d(TAG, "\tonDataChange: username already exists. Appending random string to name: " + append);
-                            }
-
-                            username = username + append;
-
-                            // Notes: Add new user to the database
-                            firebaseMethods.addNewUser(email, username, "", "", "");
-
-                            Toast.makeText(mContext, "Signup Successful. Sending verification email", Toast.LENGTH_SHORT).show();
-
-                            /*
-                                Notes: Firebase automatically signs in new user, we want to sign out user until
-                                    user verified email.
-                             */
-                            mAuth.signOut();
-
-
+                            checkIfUsernameExists(username);
                         }
 
                         @Override

@@ -50,60 +50,76 @@ public class FirebaseMethods {
     }
 
 
-
-    public boolean checkIfUsernameExists(String username, DataSnapshot dataSnapshot)
+    public void updateUsername(String username)
     {
-        Log.d(TAG, "\tcheckIfUsernameExists: checking if " + username + " already exists.");
+        Log.d(TAG, "\tupdateUsername: updating username to: " + username);
 
-        User user = new User();
+        myRef.child(mContext.getString(R.string.dbname_users))
+                .child(userID)
+                .child(mContext.getString(R.string.field_username))
+                .setValue(username);
 
-        // Notes - TODO - How to loop inside a datasnapshot
-        if(debug == true)
-        {
-            Log.d(TAG, "\tcheckIfUsernameExists: datasnapshot: " + dataSnapshot);
-            Log.d(TAG, "\tcheckIfUsernameExists: datasnapshot.getChildren(): " + dataSnapshot.getChildren());
-            Log.d(TAG, "\tcheckIfUsernameExists: NODE = " + dataSnapshot.child(userID).toString());
-            Log.d(TAG, "\tcheckIfUsernameExists: NODE = " + dataSnapshot.child(userID).getChildren().toString());
-
-            for (DataSnapshot ds: dataSnapshot.getChildren())
-            {
-                Log.d(TAG, "\tcheckIfUsernameExists: ds: " + ds);
-                User user2 = new User();
-                Log.d(TAG, "\tcheckIfUsernameExists: getValue(User.class)" + ds.getValue(User.class).toString());
-                Log.d(TAG, "\tcheckIfUsernameExists: getValue(User.class)" + ds.getValue(User.class).getUsername());
-                user2 = ds.getValue(User.class);
-//            user2.setUsername(ds.getValue(User.class).getUsername());
-                Log.d(TAG, "\tcheckIfUsernameExists: username: " + user2.getUsername());
-            }
-        }
-
-
-        // Notes: TODO - The loop below doesn't even go check the nodes
-        /*
-            Notes: Loop through DataSnapshot to check for same username.
-                DataSnapshot allows us to see what's inside the database
-                because it contains every node inside the database.
-         */
-        for (DataSnapshot ds: dataSnapshot.child(userID).getChildren())
-        {
-            Log.d(TAG, "\tcheckIfUsernameExists: datasnapshot: " + ds);
-
-            user.setUsername(ds.getValue(User.class).getUsername());
-            Log.d(TAG, "\tcheckIfUsernameExists: username: " + user.getUsername());
-
-            // Notes: TODO - Rewrite this line to make it easier to read
-            if(StringManipulation.expandUsername(user.getUsername()).equals(username))
-            {
-                Log.d(TAG, "\tcheckIfUsernameExists: Found a match: " + user.getUsername());
-                return true;
-            }
-        }
-
-        return false;
-
-
-
+        myRef.child(mContext.getString(R.string.dbname_user_account_settings))
+                .child(userID)
+                .child(mContext.getString(R.string.field_username))
+                .setValue(username);
     }
+
+
+
+//    public boolean checkIfUsernameExists(String username, DataSnapshot dataSnapshot)
+//    {
+//        Log.d(TAG, "\tcheckIfUsernameExists: checking if " + username + " already exists.");
+//
+//        User user = new User();
+//
+//        // Notes - TODO - How to loop inside a datasnapshot
+//        if(debug == true)
+//        {
+//            Log.d(TAG, "\tcheckIfUsernameExists: datasnapshot: " + dataSnapshot);
+//            Log.d(TAG, "\tcheckIfUsernameExists: datasnapshot.getChildren(): " + dataSnapshot.getChildren());
+//            Log.d(TAG, "\tcheckIfUsernameExists: NODE = " + dataSnapshot.child(userID).toString());
+//            Log.d(TAG, "\tcheckIfUsernameExists: NODE = " + dataSnapshot.child(userID).getChildren().toString());
+//
+//            for (DataSnapshot ds: dataSnapshot.getChildren())
+//            {
+//                Log.d(TAG, "\tcheckIfUsernameExists: ds: " + ds);
+//                User user2 = new User();
+//                Log.d(TAG, "\tcheckIfUsernameExists: getValue(User.class)" + ds.getValue(User.class).toString());
+//                Log.d(TAG, "\tcheckIfUsernameExists: getValue(User.class)" + ds.getValue(User.class).getUsername());
+//                user2 = ds.getValue(User.class);
+////            user2.setUsername(ds.getValue(User.class).getUsername());
+//                Log.d(TAG, "\tcheckIfUsernameExists: username: " + user2.getUsername());
+//            }
+//        }
+//
+//
+//        // Notes: TODO - The loop below doesn't even go check the nodes
+//        /*
+//            Notes: Loop through DataSnapshot to check for same username.
+//                DataSnapshot allows us to see what's inside the database
+//                because it contains every node inside the database.
+//         */
+//        for (DataSnapshot ds: dataSnapshot.child(userID).getChildren())
+//        {
+//            Log.d(TAG, "\tcheckIfUsernameExists: datasnapshot: " + ds);
+//
+//            user.setUsername(ds.getValue(User.class).getUsername());
+//            Log.d(TAG, "\tcheckIfUsernameExists: username: " + user.getUsername());
+//
+//            // Notes: TODO - Rewrite this line to make it easier to read
+//            if(StringManipulation.expandUsername(user.getUsername()).equals(username))
+//            {
+//                Log.d(TAG, "\tcheckIfUsernameExists: Found a match: " + user.getUsername());
+//                return true;
+//            }
+//        }
+//
+//        return false;
+//
+//
+//
+//    }
 
 
     /**

@@ -58,19 +58,19 @@ public class ShareActivity extends AppCompatActivity {
     private void setupViewPager()
     {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager(), 1);
-//        adapter.addFragment(new GalleryFragment());
-//        // Notes: TODO - Perhaps rename this to camerafragment
-//        adapter.addFragment(new PhotoFragment());
+        adapter.addFragment(new GalleryFragment());
+        // Notes: TODO - Perhaps rename this to camerafragment
+        adapter.addFragment(new PhotoFragment());
 
-//        mViewPager = (ViewPager) findViewById(R.id.container);
-//        mViewPager.setAdapter(adapter);
-//
-//        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabsBottom);
-//        tabLayout.setupWithViewPager(mViewPager);
-//
-//        tabLayout.getTabAt(0).setText(getString(R.string.gallery));
-//        // Notes: TODO - Perhaps change to CAMERA
-//        tabLayout.getTabAt(1).setText(getString(R.string.photo));
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(adapter);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabsBottom);
+        tabLayout.setupWithViewPager(mViewPager);
+
+        tabLayout.getTabAt(0).setText(getString(R.string.gallery));
+        // Notes: TODO - Perhaps change to CAMERA
+        tabLayout.getTabAt(1).setText(getString(R.string.photo));
 
 
 

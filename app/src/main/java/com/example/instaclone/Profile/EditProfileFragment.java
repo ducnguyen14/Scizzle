@@ -69,7 +69,7 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
                             Log.d(TAG, "\tUser re-authenticated.");
 
                             // Notes: Check to see if the new email is present in the database --> Use method fetchProvidersForEmail(String email)
-
+                            // Notes: Step 2
 //                            mAuth.fetchProvidersForEmail(mEmail.getText().toString()).addOnCompleteListener();
                             mAuth.fetchSignInMethodsForEmail(mEmail.getText().toString()).addOnCompleteListener(new OnCompleteListener<SignInMethodQueryResult>()
                             {
@@ -94,7 +94,7 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
 
                                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                                                // Notes: Update email
+                                                // Notes: Update email (Step 3)
                                                 user.updateEmail(mEmail.getText().toString())
                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
@@ -253,6 +253,39 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
                             - Submit the new email to the database and authentication
              */
         }
+
+
+        /*
+            Notes: Rest of the settings section that do not require uniqueness (except phone number)
+         */
+
+        if(!mUserSettings.getSettings().getDisplay_name().equals(displayName))
+        {
+            // Notes: Update displayname
+            mFirebaseMethods.updateUserAccountSettings(displayName, null, null, 0);
+        }
+        if(!mUserSettings.getSettings().getWebsite().equals(website))
+        {
+            // Notes: Update website
+            mFirebaseMethods.updateUserAccountSettings(null, website, null, 0);
+
+        }
+        if(!mUserSettings.getSettings().getDescription().equals(description))
+        {
+            // Notes: Update description
+            mFirebaseMethods.updateUserAccountSettings(null, null, description, 0);
+
+        }
+        if(!Long.toString(mUserSettings.getUser().getPhone_number()).equals(Long.toString(phoneNumber)))
+        {
+            // Notes: Update phone number
+            // Notes: TODO - Check for uniqueness for phone number
+            mFirebaseMethods.updateUserAccountSettings(null, null, null, phoneNumber);
+
+        }
+
+
+
 
 
 

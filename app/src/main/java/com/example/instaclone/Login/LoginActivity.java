@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.instaclone.Home.HomeActivity;
 import com.example.instaclone.R;
+import com.example.instaclone.Utils.FirebaseMethods;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -155,6 +156,11 @@ public class LoginActivity extends AppCompatActivity {
                                                 Toast.makeText(mContext, "Email is not verified\nCheck email inbox", Toast.LENGTH_SHORT).show();
                                                 mPleaseWait.setVisibility(View.GONE);
                                                 mProgressBar.setVisibility(View.GONE);
+
+                                                // Notes: TODO - Email Verification:
+                                                FirebaseMethods mFirebaseMethods = new FirebaseMethods(mContext);
+                                                mFirebaseMethods.sendVerificationEmail();
+
 
                                                 // Notes: Signing out to make sure user needs to verify email first
                                                 mAuth.signOut();

@@ -9,6 +9,7 @@
     <string name="profile_fragment">Profile</string>
 
 
+
     <!-- Notes: Dialog Names -->
     <string name="confirm_password_dialog">ConfirmPasswordDialog</string>
 
@@ -39,6 +40,10 @@
     <string name="profile_activity">Profile Activity</string>
 
 
+
+    <string name="gallery">GALLERY</string>
+    <!-- Notes: TODO - perhaps rename to Camera -->
+    <string name="photo">PHOTO</string>
 
 
 

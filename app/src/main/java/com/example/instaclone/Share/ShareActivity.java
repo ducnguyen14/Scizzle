@@ -10,10 +10,13 @@ import android.view.MenuItem;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.BottomNavigationViewHelper;
 import com.example.instaclone.Utils.Permissions;
+import com.example.instaclone.Utils.SectionsPagerAdapter;
+import com.google.android.material.tabs.TabLayout;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 public class ShareActivity extends AppCompatActivity {
@@ -23,20 +26,22 @@ public class ShareActivity extends AppCompatActivity {
     private static final int ACTIVITY_NUM = 2;
     private static final int VERIFY_PERMISSIONS_REQUEST = 1;
 
+    private ViewPager mViewPager;
+
     private Context mContext = ShareActivity.this;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_share);
 
         Log.d(TAG, "onCreate: started");
 
         // Notes: Check to see if permissions are granted
         if(checkPermissionsArray(Permissions.PERMISSIONS))
         {
-
+            setupViewPager();
         }
         else
         {
@@ -48,6 +53,32 @@ public class ShareActivity extends AppCompatActivity {
         // Notes: Set ups
 //        setupBottomNavigationView();
     }
+
+
+    private void setupViewPager()
+    {
+        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager(), 1);
+//        adapter.addFragment(new GalleryFragment());
+//        // Notes: TODO - Perhaps rename this to camerafragment
+//        adapter.addFragment(new PhotoFragment());
+
+//        mViewPager = (ViewPager) findViewById(R.id.container);
+//        mViewPager.setAdapter(adapter);
+//
+//        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabsBottom);
+//        tabLayout.setupWithViewPager(mViewPager);
+//
+//        tabLayout.getTabAt(0).setText(getString(R.string.gallery));
+//        // Notes: TODO - Perhaps change to CAMERA
+//        tabLayout.getTabAt(1).setText(getString(R.string.photo));
+
+
+
+
+    }
+
+
+
 
 
     public void verifyPermissions(String[] permissions)

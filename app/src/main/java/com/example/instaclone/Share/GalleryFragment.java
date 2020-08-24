@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -16,6 +18,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.instaclone.R;
+import com.example.instaclone.Utils.FilePaths;
+import com.example.instaclone.Utils.FileSearch;
+
+import java.util.ArrayList;
 
 public class GalleryFragment extends Fragment {
     private static final String TAG = "GalleryFragment/DEBUG";
@@ -25,6 +31,10 @@ public class GalleryFragment extends Fragment {
     private ImageView galleryImage;
     private ProgressBar mProgressBar;
     private Spinner directorySpinner;
+
+    // Notes: Variables
+    private ArrayList<String> directories;
+
 
     @Nullable
     @Override
@@ -39,6 +49,7 @@ public class GalleryFragment extends Fragment {
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         mProgressBar.setVisibility(View.GONE);
 
+        directories = new ArrayList<>();
 
 
         ImageView shareClose = (ImageView) view.findViewById(R.id.ivCloseShare);
@@ -67,9 +78,56 @@ public class GalleryFragment extends Fragment {
             }
         });
 
-
+        init();
 
 
         return view;
     }
+
+
+    private void init()
+    {
+        FilePaths filePaths = new FilePaths();
+
+        // Notes: (Default root directory) Check for other folders inside "/storage/emulated/0/pictures)"
+        if(FileSearch.getDirectoryPaths(filePaths.PICTURES) != null)
+        {
+            // Notes: Make a list of directories that's inside PICTURES directory
+            directories = FileSearch.getDirectoryPaths(filePaths.PICTURES);
+        }
+
+        directories.add(filePaths.CAMERA);
+
+
+        // Notes: Creating adapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, directories);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        directorySpinner.setAdapter(adapter);
+
+        // Notes: Spinner will display all directories that's inside PICTURES and CAMERA
+        directorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                Log.d(TAG, "\tonItemSelected: selected: " + directories.get(position));
+
+                // Notes: Setup image grid for directory chosen
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+
+            }
+        });
+
+
+    }
+
+
+
+
+
 }

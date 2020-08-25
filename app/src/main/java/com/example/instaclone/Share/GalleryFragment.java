@@ -1,5 +1,6 @@
 package com.example.instaclone.Share;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,6 +47,8 @@ public class GalleryFragment extends Fragment {
     private ArrayList<String> directories;
     // Notes: Prepend for the Universal Image Loader
     private String mAppend = "file:/";
+    private String mSelectedImage;
+
 
 
 
@@ -85,7 +88,11 @@ public class GalleryFragment extends Fragment {
             // Notes: Navigating to confirmation page
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "\tonClick: navigating to the final share screen.");
+                Log.d(TAG, "\tonClick: navigating to the final confirmation share screen.");
+
+                Intent intent = new Intent(getActivity(), NextActivity.class);
+                intent.putExtra(getString(R.string.selected_image), mSelectedImage);
+                startActivity(intent);
 
                 // Notes: TODO - Need to write logic to handle coming from ShareActivity or EditProfileFragment
             }
@@ -102,6 +109,7 @@ public class GalleryFragment extends Fragment {
     {
         FilePaths filePaths = new FilePaths();
 
+        // NOTES: TODO - Take a look at why is there a .thumbnail directory in PICTURES (This gives Null ptr Exception)
         // Notes: (Default root directory) Check for other folders inside "/storage/emulated/0/pictures)"
         if(FileSearch.getDirectoryPaths(filePaths.PICTURES) != null)
         {
@@ -112,8 +120,22 @@ public class GalleryFragment extends Fragment {
         directories.add(filePaths.CAMERA);
 
 
+        // Notes: Shorter name of the directories
+        ArrayList<String> directoryNames =  new ArrayList<>();
+        for(int i = 0; i < directories.size(); i++)
+        {
+            int length_of_string = directories.get(i).length();
+            int index = directories.get(i).lastIndexOf("/");
+            // Notes: TODO - Figure out how to only get the directory of CAMERA
+            String dir = directories.get(i).substring(index + 1, length_of_string);
+//            String dir = directories.get(i).substring(index);
+            Log.d(TAG, "\t\t\tinit: dir = " + dir);
+            directoryNames.add(dir);
+        }
+
+
         // Notes: Creating adapter
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, directories);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, directoryNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         directorySpinner.setAdapter(adapter);
@@ -169,6 +191,7 @@ public class GalleryFragment extends Fragment {
         if(imgURLs.size() > 0)
         {
             setImage(imgURLs.get(0), galleryImage, mAppend);
+            mSelectedImage = imgURLs.get(0);
         }
 
 
@@ -181,7 +204,8 @@ public class GalleryFragment extends Fragment {
                 // Notes: DEBUG - Array out of bounds
                 if(imgURLs.size() > 0)
                 {
-                    setImage(imgURLs.get(0), galleryImage, mAppend);
+                    setImage(imgURLs.get(position), galleryImage, mAppend);
+                    mSelectedImage = imgURLs.get(position);
                 }
 
 

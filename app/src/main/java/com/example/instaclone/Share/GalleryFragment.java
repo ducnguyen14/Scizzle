@@ -67,7 +67,7 @@ public class GalleryFragment extends Fragment {
 
         directories = new ArrayList<>();
 
-
+        // Notes: Close Button
         ImageView shareClose = (ImageView) view.findViewById(R.id.ivCloseShare);
         shareClose.setOnClickListener(new View.OnClickListener()
         {
@@ -81,8 +81,8 @@ public class GalleryFragment extends Fragment {
             }
         });
 
+        // Notes: Navigate to the NextActivity
         TextView nextScreen = (TextView) view.findViewById(R.id.tvNext);
-
         nextScreen.setOnClickListener(new View.OnClickListener()
         {
             // Notes: Navigating to confirmation page

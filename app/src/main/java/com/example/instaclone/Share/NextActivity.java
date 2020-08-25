@@ -35,11 +35,14 @@ public class NextActivity extends AppCompatActivity {
 
     // Notes: Variables
     private String mAppend = "file:/";
+    private int imageCount = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_next);
+
+        mFirebaseMethods = new FirebaseMethods(NextActivity.this);
 
         setupFirebaseAuth();
 
@@ -72,6 +75,8 @@ public class NextActivity extends AppCompatActivity {
             }
         });
 
+        setImage();
+
     }
 
 
@@ -90,6 +95,24 @@ public class NextActivity extends AppCompatActivity {
     }
 
 
+    private void someMethod()
+    {
+        /*
+            Step 1)
+            Create a data model for photos
+
+            Step 2)
+            Add properies to the photo objects (caption, date, imageURL, photo_id, tags, user_id)
+
+            Step 3)
+            Count the number of photos that the user already has
+
+            Step 4)
+            a) Upload the photo to Firebase Storage
+            b) Insert into 'photos' node
+            c) Insert into 'user_photos' node
+         */
+    }
 
 
     /**
@@ -111,7 +134,7 @@ public class NextActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
-
+        Log.d(TAG, "\tonDataChange: image count: " + imageCount);
 
 
         // Notes: Checks if a user auth state has changed --> Signed in or signed out
@@ -142,7 +165,8 @@ public class NextActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot)
             {
-
+                imageCount = mFirebaseMethods.getImageCount(snapshot);
+                Log.d(TAG, "\tonDataChange: image count: " + imageCount);
             }
 
             @Override

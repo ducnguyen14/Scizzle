@@ -1,5 +1,6 @@
 package com.example.instaclone.Share;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,11 +21,20 @@ import androidx.fragment.app.Fragment;
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.FilePaths;
 import com.example.instaclone.Utils.FileSearch;
+import com.example.instaclone.Utils.GridImageAdapter;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.util.ArrayList;
 
 public class GalleryFragment extends Fragment {
+    // Notes: Constants
     private static final String TAG = "GalleryFragment/DEBUG";
+    private static final int NUM_GRID_COLUMNS = 3;
+
+
+
 
     // Notes: widgets
     private GridView gridView;
@@ -34,6 +44,9 @@ public class GalleryFragment extends Fragment {
 
     // Notes: Variables
     private ArrayList<String> directories;
+    // Notes: Prepend for the Universal Image Loader
+    private String mAppend = "file:/";
+
 
 
     @Nullable
@@ -114,6 +127,7 @@ public class GalleryFragment extends Fragment {
                 Log.d(TAG, "\tonItemSelected: selected: " + directories.get(position));
 
                 // Notes: Setup image grid for directory chosen
+                setupGridView(directories.get(position));
             }
 
             @Override
@@ -122,11 +136,97 @@ public class GalleryFragment extends Fragment {
 
             }
         });
+    }
+
+
+    private void setupGridView(String selectedDirectory)
+    {
+        Log.d(TAG, "\tsetupGridView: directory chosen: " + selectedDirectory);
+        // Notes: All image URLs from directory chosen
+        final ArrayList<String> imgURLs = FileSearch.getFilePaths(selectedDirectory);
+
+
+        // Notes: Grid images should have the same height as width
+        int gridWidth = getResources().getDisplayMetrics().widthPixels;
+        int imageWidth = gridWidth/NUM_GRID_COLUMNS;
+
+        // Notes: Set the grid column width
+        gridView.setColumnWidth(imageWidth);
+
+
+        /*
+            Notes: Use the GridImageAdapter to adapt the images to gridview.
+                Need to prepend for the Universal Image Loader
+        */
+        GridImageAdapter adapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, mAppend, imgURLs);
+
+        // Notes: Set adapter to gridview
+        gridView.setAdapter(adapter);
+
+
+        // Notes: Set the first image to be displayed when the activity fragment view is inflated
+        // Notes: DEBUG - Array out of bounds
+        if(imgURLs.size() > 0)
+        {
+            setImage(imgURLs.get(0), galleryImage, mAppend);
+        }
+
+
+        // Notes: Changing the iamgeview when an image is clicked on in the gridview
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "\tonItemClick: selected an image: " + imgURLs.get(position));
+
+                // Notes: DEBUG - Array out of bounds
+                if(imgURLs.size() > 0)
+                {
+                    setImage(imgURLs.get(0), galleryImage, mAppend);
+                }
+
+
+            }
+        });
 
 
     }
 
 
+    private void setImage(String imgURL, ImageView image, String append)
+    {
+        Log.d(TAG, "\tsetImage: setting image");
+
+        ImageLoader imageLoader = ImageLoader.getInstance();
+
+        imageLoader.displayImage(append + imgURL, image, new ImageLoadingListener()
+        {
+            @Override
+            public void onLoadingStarted(String imageUri, View view)
+            {
+                mProgressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                mProgressBar.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                mProgressBar.setVisibility(View.INVISIBLE);
+
+            }
+
+            @Override
+            public void onLoadingCancelled(String imageUri, View view) {
+                mProgressBar.setVisibility(View.INVISIBLE);
+
+            }
+        });
+
+
+
+    }
 
 
 

@@ -1,6 +1,7 @@
 package com.example.instaclone.Utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class FirebaseMethods {
     private static final String TAG = "FirebaseMethods/DEBUG";
@@ -72,6 +74,18 @@ public class FirebaseMethods {
             // Notes: Need to pass the paths to the location
             StorageReference storageReference = mStorageReference
                     .child(filePaths.FIREBASE_IMAGE_STORAGE + "/" + user_id + "/photo" + (count + 1));
+
+
+            // Notes: Convert image URL to bitmap
+            Bitmap bm = ImageManager.getBitmap(imgUrl);
+            // Notes: Convert bitmap to byte[] --> TODO: Play with the quality to find the sweet spot of a decent photo quality
+            byte[] bytes = ImageManager.getBytesFromBitmap(bm, 100);
+
+            UploadTask uploadTask = null;
+            uploadTask = storageReference.putBytes(bytes);
+
+
+
 
         }
         // Notes: Case 2 - New profile photo

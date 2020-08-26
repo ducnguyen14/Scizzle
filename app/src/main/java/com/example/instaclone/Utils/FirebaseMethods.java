@@ -2,6 +2,7 @@ package com.example.instaclone.Utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,6 +13,8 @@ import com.example.instaclone.models.User;
 import com.example.instaclone.models.UserAccountSettings;
 import com.example.instaclone.models.UserSettings;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -37,7 +41,12 @@ public class FirebaseMethods {
     private StorageReference mStorageReference;
     private String userID;
 
+    // Notes: Variables
     private Context mContext;
+    private double mPhotoUploadProgress = 0;
+
+
+
 
     public FirebaseMethods(Context context)
     {
@@ -76,6 +85,7 @@ public class FirebaseMethods {
                     .child(filePaths.FIREBASE_IMAGE_STORAGE + "/" + user_id + "/photo" + (count + 1));
 
 
+
             // Notes: Convert image URL to bitmap
             Bitmap bm = ImageManager.getBitmap(imgUrl);
             // Notes: Convert bitmap to byte[] --> TODO: Play with the quality to find the sweet spot of a decent photo quality
@@ -83,6 +93,55 @@ public class FirebaseMethods {
 
             UploadTask uploadTask = null;
             uploadTask = storageReference.putBytes(bytes);
+
+
+
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>()
+            {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+                {
+
+                    // Notes: TODO - Code below does not work (Part 54)
+//                    Uri firebaseUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult();
+//                    Uri firebaseUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult();
+//                        Uri firebaseUrl = storageReference.getDownloadUrl().getResult();
+
+                    Toast.makeText(mContext, "Photo upload success", Toast.LENGTH_SHORT).show();
+
+
+                    // Notes: Storing the pointer into Firebase Database
+
+                    // Notes: Step 1 - Add the new photo to 'photos' node and 'user_photos' node
+
+                    // Notes: Navigate to the main feed so the user can see their photo
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e)
+                {
+                    Log.d(TAG, "\tonFailure: Photo Upload Failed." + e.getMessage());
+                    Toast.makeText(mContext, "Photo Upload Failed", Toast.LENGTH_SHORT).show();
+
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot)
+                {
+                    double progress = (100 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+
+                    // Notes: Toast will not show unless the new progress is at least 15 higher than the previous progress
+                    if(progress - 15 > mPhotoUploadProgress)
+                    {
+                        Toast.makeText(mContext, "Photo Upload Progress: " + String.format("%.0f", progress) + "%", Toast.LENGTH_SHORT).show();
+                        mPhotoUploadProgress = progress;
+                    }
+
+                    Log.d(TAG, "\tonProgress: upload progress: " + progress + "% done");
+
+                }
+            });
 
 
 

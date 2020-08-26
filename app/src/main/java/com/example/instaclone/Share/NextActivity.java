@@ -125,9 +125,10 @@ public class NextActivity extends AppCompatActivity {
     {
         Intent intent = getIntent();
         ImageView image = (ImageView) findViewById(R.id.imageShare);
+        imgUrl = intent.getStringExtra(getString(R.string.selected_image));
 
         // Notes: Universal Image Loader can handle null strings and set default image
-        UniversalImageLoader.setimage(intent.getStringExtra(getString(R.string.selected_image)), image, null, mAppend);
+        UniversalImageLoader.setimage(imgUrl, image, null, mAppend);
 
     }
 

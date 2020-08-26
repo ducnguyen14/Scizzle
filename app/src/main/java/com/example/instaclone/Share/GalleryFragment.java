@@ -23,6 +23,7 @@ import com.example.instaclone.R;
 import com.example.instaclone.Utils.FilePaths;
 import com.example.instaclone.Utils.FileSearch;
 import com.example.instaclone.Utils.GridImageAdapter;
+import com.example.instaclone.Utils.UniversalImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -221,6 +222,10 @@ public class GalleryFragment extends Fragment {
         Log.d(TAG, "\tsetImage: setting image");
 
         ImageLoader imageLoader = ImageLoader.getInstance();
+
+        // Notes: TODO - Need to init the ImageLoader
+        UniversalImageLoader universalImageLoader = new UniversalImageLoader(getActivity());
+        imageLoader.init(universalImageLoader.getConfig());
 
         imageLoader.displayImage(append + imgURL, image, new ImageLoadingListener()
         {

@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,9 +35,13 @@ public class NextActivity extends AppCompatActivity {
     private FirebaseMethods mFirebaseMethods;
 
 
+    // Notes: Widgets
+    private EditText mCaption;
+
     // Notes: Variables
     private String mAppend = "file:/";
     private int imageCount = 0;
+    private String imgUrl;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,6 +49,7 @@ public class NextActivity extends AppCompatActivity {
         setContentView(R.layout.activity_next);
 
         mFirebaseMethods = new FirebaseMethods(NextActivity.this);
+        mCaption = (EditText) findViewById(R.id.caption);
 
         setupFirebaseAuth();
 
@@ -71,6 +78,12 @@ public class NextActivity extends AppCompatActivity {
                 Log.d(TAG, "\tonClick: navigating to the final confirmation share screen.");
 
                 // Notes: Upload Image to firebase
+                Toast.makeText(NextActivity.this, "Attempting to upload new photo", Toast.LENGTH_SHORT).show();
+
+                String caption = mCaption.getText().toString();
+
+                // Notes: Consider the case of also uploading profile photos
+                mFirebaseMethods.uploadNewPhoto(getString(R.string.new_photo), caption, imageCount, imgUrl);
 
             }
         });
@@ -79,20 +92,6 @@ public class NextActivity extends AppCompatActivity {
 
     }
 
-
-    /**
-     * Notes: Gets the image URL from the incoming intent and displays the
-     *      chosen image.
-     */
-    private void setImage()
-    {
-        Intent intent = getIntent();
-        ImageView image = (ImageView) findViewById(R.id.imageShare);
-
-        // Notes: Universal Image Loader can handle null strings and set default image
-        UniversalImageLoader.setimage(intent.getStringExtra(getString(R.string.selected_image)), image, null, mAppend);
-
-    }
 
 
     private void someMethod()
@@ -113,6 +112,25 @@ public class NextActivity extends AppCompatActivity {
             c) Insert into 'user_photos' node
          */
     }
+
+
+
+
+
+    /**
+     * Notes: Gets the image URL from the incoming intent and displays the
+     *      chosen image.
+     */
+    private void setImage()
+    {
+        Intent intent = getIntent();
+        ImageView image = (ImageView) findViewById(R.id.imageShare);
+
+        // Notes: Universal Image Loader can handle null strings and set default image
+        UniversalImageLoader.setimage(intent.getStringExtra(getString(R.string.selected_image)), image, null, mAppend);
+
+    }
+
 
 
     /**

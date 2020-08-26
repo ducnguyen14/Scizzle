@@ -18,6 +18,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class FirebaseMethods {
     private static final String TAG = "FirebaseMethods/DEBUG";
@@ -30,6 +32,7 @@ public class FirebaseMethods {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
+    private StorageReference mStorageReference;
     private String userID;
 
     private Context mContext;
@@ -39,6 +42,7 @@ public class FirebaseMethods {
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
+        mStorageReference = FirebaseStorage.getInstance().getReference();
         mContext = context;
 
 
@@ -46,6 +50,36 @@ public class FirebaseMethods {
         {
             userID = mAuth.getCurrentUser().getUid();
         }
+
+    }
+
+
+
+    public void uploadNewPhoto(String photoType, String caption, int count, String imgUrl)
+    {
+        Log.d(TAG, "\tuploadNewPhoto: attempting to upload new photo");
+
+        FilePaths filePaths = new FilePaths();
+
+        // Notes: Case 1 - New Photo
+        if(photoType.equals(mContext.getString(R.string.new_photo)))
+        {
+            Log.d(TAG, "\tuploadNewPhoto: uploading New Photo");
+
+            // Notes: TODO - Double check if we can just use userID or if there's a problem with the global var
+            String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            // Notes: Need to pass the paths to the location
+            StorageReference storageReference = mStorageReference
+                    .child(filePaths.FIREBASE_IMAGE_STORAGE + "/" + user_id + "/photo" + (count + 1));
+
+        }
+        // Notes: Case 2 - New profile photo
+        else if(photoType.equals(mContext.getString(R.string.profile_photo)))
+        {
+            Log.d(TAG, "\tuploadNewPhoto: uploading new Profile Photo");
+        }
+
 
     }
 

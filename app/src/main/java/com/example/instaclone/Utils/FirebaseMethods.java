@@ -103,9 +103,18 @@ public class FirebaseMethods {
                 {
 
                     // Notes: TODO - Code below does not work (Part 54)
-//                    Uri firebaseUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult();
-//                    Uri firebaseUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult();
-//                        Uri firebaseUrl = storageReference.getDownloadUrl().getResult();
+                    // Uri firebaseUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult();
+                    // Notes: Solution to above:
+                    Uri firebaseUrl = null;
+                    taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+                    {
+                        @Override
+                        public void onSuccess(Uri uri)
+                        {
+                            Log.d(TAG, "\tonSuccess: Uri ---> " + uri.toString());
+                        }
+                    });
+
 
                     Toast.makeText(mContext, "Photo upload success", Toast.LENGTH_SHORT).show();
 

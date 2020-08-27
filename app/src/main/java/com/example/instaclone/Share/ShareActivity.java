@@ -92,13 +92,22 @@ public class ShareActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Notes: This method retrieves incoming task from EditProfileFragment/Change Profile photo
+     * @return
+     */
+    public int getTask()
+    {
+        // Notes: getFlags() should return 268435456, 0, or null
+        Log.d(TAG, "getTask: TASK: " + getIntent().getFlags());
 
-
+        return getIntent().getFlags();
+    }
 
 
     public void verifyPermissions(String[] permissions)
     {
-        Log.d(TAG, "verifyPermissions: verifying permissions.");
+        Log.d(TAG, "\tverifyPermissions: verifying permissions.");
 
         // Notes:
         ActivityCompat.requestPermissions(ShareActivity.this, permissions, VERIFY_PERMISSIONS_REQUEST);

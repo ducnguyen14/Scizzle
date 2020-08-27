@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.instaclone.Profile.AccountSettingsActivity;
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.FilePaths;
 import com.example.instaclone.Utils.FileSearch;
@@ -91,9 +92,26 @@ public class GalleryFragment extends Fragment {
             public void onClick(View v) {
                 Log.d(TAG, "\tonClick: navigating to the final confirmation share screen.");
 
-                Intent intent = new Intent(getActivity(), NextActivity.class);
-                intent.putExtra(getString(R.string.selected_image), mSelectedImage);
-                startActivity(intent);
+                // Notes: Root = ShareActivity
+                if(isRootTask())
+                {
+                    Intent intent = new Intent(getActivity(), NextActivity.class);
+                    intent.putExtra(getString(R.string.selected_image), mSelectedImage);
+                    startActivity(intent);
+                }
+                // Notes: Root = EditProfileFragment for changing profile photo
+                else
+                {
+                    Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
+                    intent.putExtra(getString(R.string.selected_image), mSelectedImage);
+
+                    // Notes: What fragment to return to
+                    intent.putExtra(getString(R.string.return_to_fragment), getString(R.string.edit_profile_fragment));
+
+                    startActivity(intent);
+                }
+
+
 
                 // Notes: TODO - Need to write logic to handle coming from ShareActivity or EditProfileFragment
             }
@@ -103,6 +121,21 @@ public class GalleryFragment extends Fragment {
 
 
         return view;
+    }
+
+
+    private boolean isRootTask()
+    {
+        if(((ShareActivity)getActivity()).getTask() == 0)
+        {
+            // Notes: Root task is ShareActivity
+            return true;
+        }
+        else
+        {
+            // Notes: Root task is EditProfileFragment
+            return false;
+        }
     }
 
 

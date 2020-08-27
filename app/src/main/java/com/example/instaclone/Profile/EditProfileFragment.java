@@ -1,5 +1,6 @@
 package com.example.instaclone.Profile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.instaclone.R;
+import com.example.instaclone.Share.ShareActivity;
 import com.example.instaclone.Utils.FirebaseMethods;
 import com.example.instaclone.Utils.UniversalImageLoader;
 import com.example.instaclone.dialogs.ConfirmPasswordDialog;
@@ -373,6 +375,26 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
         mDescription.setText(settings.getDescription());
         mEmail.setText(userSettings.getUser().getEmail());
         mPhoneNumber.setText(String.valueOf(userSettings.getUser().getPhone_number()));
+
+
+        mChangeProfilePhoto.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Log.d(TAG, "\tonClick: changing profile photo");
+                Intent intent = new Intent(getActivity(), ShareActivity.class);
+
+                /*
+                    Notes: Set flag in the intent to let ShareActivity know that this intent is from EditProfileFragment
+                        FLAG_ACTIVITY_NEW_TASK = 268435456. The important thing is that FLAG_ACTIVITY_NEW_TASK does not equal 0
+                        or null, so it is a way to differentiate the incoming intent to ShareActivity
+                 */
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            }
+        });
+
 
     }
 

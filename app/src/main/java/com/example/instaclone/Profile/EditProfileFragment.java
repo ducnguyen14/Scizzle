@@ -391,6 +391,7 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
                         or null, so it is a way to differentiate the incoming intent to ShareActivity
                  */
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().startActivity(intent);
 
             }
         });

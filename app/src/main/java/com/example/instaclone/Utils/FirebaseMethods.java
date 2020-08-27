@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.instaclone.R;
+import com.example.instaclone.models.Photo;
 import com.example.instaclone.models.User;
 import com.example.instaclone.models.UserAccountSettings;
 import com.example.instaclone.models.UserSettings;
@@ -26,6 +27,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class FirebaseMethods {
     private static final String TAG = "FirebaseMethods/DEBUG";
@@ -66,7 +72,7 @@ public class FirebaseMethods {
 
 
 
-    public void uploadNewPhoto(String photoType, String caption, int count, String imgUrl)
+    public void uploadNewPhoto(String photoType, final String caption, int count, String imgUrl)
     {
         Log.d(TAG, "\tuploadNewPhoto: attempting to upload new photo");
 
@@ -105,18 +111,26 @@ public class FirebaseMethods {
                     // Notes: TODO - Code below does not work (Part 54)
                     // Uri firebaseUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult();
                     // Notes: Solution to above:
-                    Uri firebaseUrl = null;
+
                     taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
                     {
                         @Override
                         public void onSuccess(Uri uri)
                         {
-                            Log.d(TAG, "\tonSuccess: Uri ---> " + uri.toString());
+                            Uri firebaseUrl = uri;
+
+                            addPhotoToDatabase(caption, firebaseUrl.toString());
+
+                            Toast.makeText(mContext, "Photo upload success", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "\tonSuccess: Uri ---> " + firebaseUrl.toString());
+
+
+
                         }
                     });
 
 
-                    Toast.makeText(mContext, "Photo upload success", Toast.LENGTH_SHORT).show();
+
 
 
                     // Notes: Storing the pointer into Firebase Database
@@ -164,6 +178,50 @@ public class FirebaseMethods {
 
 
     }
+
+
+    private String getTimestamp()
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US);
+        sdf.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
+        return sdf.format(new Date());
+
+    }
+
+
+
+
+    private void addPhotoToDatabase(String caption, String url)
+    {
+        Log.d(TAG, "\taddPhotoToDatabase: Adding photo to database");
+
+        // Notes: Each photo has its own separate ID
+        String newPhotoKey = myRef.child(mContext.getString(R.string.dbname_photos)).push().getKey();
+
+        String tags = StringManipulation.getTags(caption);
+
+        Photo photo = new Photo();
+        photo.setCaption(caption);
+        photo.setDate_created(getTimestamp());
+        photo.setImage_path(url);
+        photo.setTags(tags);
+        photo.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        photo.setPhoto_id(newPhotoKey);
+
+
+        // Notes: Insert into database
+        myRef.child(mContext.getString(R.string.dbname_user_photos))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(newPhotoKey)
+                .setValue(photo);
+
+        myRef.child(mContext.getString(R.string.dbname_photos))
+                .child(newPhotoKey)
+                .setValue(photo);
+
+
+    }
+
 
 
     public int getImageCount(DataSnapshot dataSnapshot)

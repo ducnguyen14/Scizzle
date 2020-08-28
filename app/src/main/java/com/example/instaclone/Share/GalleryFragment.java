@@ -105,7 +105,7 @@ public class GalleryFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
                     intent.putExtra(getString(R.string.selected_image), mSelectedImage);
 
-                    // Notes: What fragment to return to
+                    // Notes: Where fragment should return to
                     intent.putExtra(getString(R.string.return_to_fragment), getString(R.string.edit_profile_fragment));
 
                     startActivity(intent);
@@ -114,9 +114,6 @@ public class GalleryFragment extends Fragment {
                     getActivity().finish();
                 }
 
-
-
-                // Notes: TODO - Need to write logic to handle coming from ShareActivity or EditProfileFragment
             }
         });
 

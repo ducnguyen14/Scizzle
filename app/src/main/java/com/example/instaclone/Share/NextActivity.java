@@ -83,7 +83,7 @@ public class NextActivity extends AppCompatActivity {
                 String caption = mCaption.getText().toString();
 
                 // Notes: Consider the case of also uploading profile photos
-                mFirebaseMethods.uploadNewPhoto(getString(R.string.new_photo), caption, imageCount, imgUrl);
+                mFirebaseMethods.uploadNewPhoto(getString(R.string.new_photo), caption, imageCount, imgUrl, null);
 
             }
         });

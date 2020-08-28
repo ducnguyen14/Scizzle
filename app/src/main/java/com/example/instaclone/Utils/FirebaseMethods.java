@@ -75,7 +75,7 @@ public class FirebaseMethods {
 
 
 
-    public void uploadNewPhoto(String photoType, final String caption, int count, String imgUrl)
+    public void uploadNewPhoto(String photoType, final String caption, int count, String imgUrl, Bitmap bm)
     {
         Log.d(TAG, "\tuploadNewPhoto: attempting to upload new photo");
 
@@ -94,9 +94,13 @@ public class FirebaseMethods {
                     .child(filePaths.FIREBASE_IMAGE_STORAGE + "/" + user_id + "/photo" + (count + 1));
 
 
-
             // Notes: Convert image URL to bitmap
-            Bitmap bm = ImageManager.getBitmap(imgUrl);
+            if(bm == null)
+            {
+                bm = ImageManager.getBitmap(imgUrl);
+            }
+
+
             // Notes: Convert bitmap to byte[] --> TODO: Play with the quality to find the sweet spot of a decent photo quality
             byte[] bytes = ImageManager.getBytesFromBitmap(bm, 100);
 
@@ -184,13 +188,6 @@ public class FirebaseMethods {
             Log.d(TAG, "\tuploadNewPhoto: uploading new Profile Photo");
 
 
-            // Notes: Set the viewpager on AccountSettingsActivity to the EditProfileFragment
-            ((AccountSettingsActivity)mContext).setViewPager(
-                    ((AccountSettingsActivity)mContext).pagerAdapter
-                            .getFragmentNumber(mContext.getString(R.string.edit_profile_fragment)));
-
-
-
             // Notes: TODO - Double check if we can just use userID or if there's a problem with the global var
             String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -201,7 +198,11 @@ public class FirebaseMethods {
 
 
             // Notes: Convert image URL to bitmap
-            Bitmap bm = ImageManager.getBitmap(imgUrl);
+            if(bm == null)
+            {
+                bm = ImageManager.getBitmap(imgUrl);
+            }
+
             // Notes: Convert bitmap to byte[] --> TODO: Play with the quality to find the sweet spot of a decent photo quality
             byte[] bytes = ImageManager.getBytesFromBitmap(bm, 100);
 
@@ -215,7 +216,6 @@ public class FirebaseMethods {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
                 {
-
                     // Notes: TODO - Code below does not work (Part 54)
                     // Uri firebaseUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().getResult();
                     // Notes: Solution to above:
@@ -234,6 +234,12 @@ public class FirebaseMethods {
 
                             // Notes: Insert into 'user_account_settings' node
                             setProfilePhoto(firebaseUrl.toString());
+
+                            // Notes: Set the viewpager on AccountSettingsActivity to the EditProfileFragment
+                            ((AccountSettingsActivity)mContext).setViewPager(
+                                    ((AccountSettingsActivity)mContext).pagerAdapter
+                                            .getFragmentNumber(mContext.getString(R.string.edit_profile_fragment)));
+
 
                             Toast.makeText(mContext, "Photo upload success", Toast.LENGTH_SHORT).show();
                             Log.d(TAG, "\tonSuccess: Uri ---> " + firebaseUrl.toString());

@@ -23,7 +23,9 @@ import com.example.instaclone.Login.LoginActivity;
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.BottomNavigationViewHelper;
 import com.example.instaclone.Utils.FirebaseMethods;
+import com.example.instaclone.Utils.GridImageAdapter;
 import com.example.instaclone.Utils.UniversalImageLoader;
+import com.example.instaclone.models.Photo;
 import com.example.instaclone.models.User;
 import com.example.instaclone.models.UserAccountSettings;
 import com.example.instaclone.models.UserSettings;
@@ -33,8 +35,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -42,6 +48,7 @@ public class ProfileFragment extends Fragment
 {
     private static final String TAG = "ProfileFragment/DEBUG";
     private static final int ACTIVITY_NUM = 4;
+    private static final int NUM_GRID_COLUMNS = 3;
 
     // Notes: Firebase
     private FirebaseAuth mAuth;
@@ -52,7 +59,7 @@ public class ProfileFragment extends Fragment
 
 
 
-
+    // Notes: Widgets
     private TextView mPosts, mFollowers, mFollowing, mDisplayName, mUsername, mWebsite, mDescription;
     private ProgressBar mProgressBar;
     private CircleImageView mProfilePhoto;
@@ -97,6 +104,9 @@ public class ProfileFragment extends Fragment
 
         setupFirebaseAuth();
 
+        setupGridView();
+
+
         editProfile.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -117,6 +127,57 @@ public class ProfileFragment extends Fragment
 
         return view;
     }
+
+
+    public void setupGridView()
+    {
+        Log.d(TAG, "setupGridView: Setting up image grid");
+
+        final ArrayList<Photo> photos = new ArrayList<>();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        Query query = reference
+                .child(getString(R.string.dbname_user_photos))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        query.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                {
+                    photos.add(singleSnapshot.getValue(Photo.class));
+                }
+
+                // Notes: Set up image grid
+                int gridWidth = getResources().getDisplayMetrics().widthPixels;
+                int imageWidth = gridWidth/NUM_GRID_COLUMNS;
+
+                gridView.setColumnWidth(imageWidth);
+
+
+                // Notes: Getting the imageURLs pathways
+                ArrayList<String> imgUrls = new ArrayList<String>();
+                for(int i = 0; i < photos.size(); i++)
+                {
+                    imgUrls.add(photos.get(i).getImage_path());
+                }
+
+                // Notes: Setting images to the grid
+                GridImageAdapter adapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, "", imgUrls);
+                gridView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
+
+    }
+
 
 
     private void setProfileWidgets(UserSettings userSettings)

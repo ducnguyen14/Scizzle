@@ -109,6 +109,9 @@ public class GalleryFragment extends Fragment {
                     intent.putExtra(getString(R.string.return_to_fragment), getString(R.string.edit_profile_fragment));
 
                     startActivity(intent);
+
+                    // Notes: Disable back navigation
+                    getActivity().finish();
                 }
 
 

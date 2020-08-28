@@ -41,7 +41,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
     private Context mContext;
 
 
-    private SectionsStatePagerAdapter pagerAdapter;
+    public SectionsStatePagerAdapter pagerAdapter;
     private ViewPager mViewPager;
     private RelativeLayout mRelativelayout;
 
@@ -124,7 +124,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
     }
 
 
-    private void setViewPager(int fragmentNumber)
+    public void setViewPager(int fragmentNumber)
     {
         /*
             Notes: In activity_accountsettings.xml, the ViewPager is included right above the

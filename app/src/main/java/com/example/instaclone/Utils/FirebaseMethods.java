@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.instaclone.Home.HomeActivity;
+import com.example.instaclone.Profile.AccountSettingsActivity;
 import com.example.instaclone.R;
 import com.example.instaclone.models.Photo;
 import com.example.instaclone.models.User;
@@ -183,6 +184,13 @@ public class FirebaseMethods {
             Log.d(TAG, "\tuploadNewPhoto: uploading new Profile Photo");
 
 
+            // Notes: Set the viewpager on AccountSettingsActivity to the EditProfileFragment
+            ((AccountSettingsActivity)mContext).setViewPager(
+                    ((AccountSettingsActivity)mContext).pagerAdapter
+                            .getFragmentNumber(mContext.getString(R.string.edit_profile_fragment)));
+
+
+
             // Notes: TODO - Double check if we can just use userID or if there's a problem with the global var
             String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -226,7 +234,6 @@ public class FirebaseMethods {
 
                             // Notes: Insert into 'user_account_settings' node
                             setProfilePhoto(firebaseUrl.toString());
-
 
                             Toast.makeText(mContext, "Photo upload success", Toast.LENGTH_SHORT).show();
                             Log.d(TAG, "\tonSuccess: Uri ---> " + firebaseUrl.toString());

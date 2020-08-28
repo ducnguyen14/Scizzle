@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -47,6 +48,25 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileFragment extends Fragment
 {
     private static final String TAG = "ProfileFragment/DEBUG";
+
+    // Notes: Implemented in ProfileActivity, ProfileActivity will navigate us to ViewPostFragment
+    public interface OnGridImageSelectedListener
+    {
+        /*
+            Notes: Using an activityNumber because ViewPostFragment is accessible from many different
+                places (Profile, Homefeed, clicking on a picture, searchfeed, etc). activityNumber
+                allows us to mark the bottom navigation view bar accordingly to keep track of which activity
+                we are at.
+         */
+        void onGridImageSelected(Photo photo, int activityNumber);
+    }
+    OnGridImageSelectedListener mOnGridImageSelectedListener;
+
+
+
+
+
+
     private static final int ACTIVITY_NUM = 4;
     private static final int NUM_GRID_COLUMNS = 3;
 
@@ -130,10 +150,26 @@ public class ProfileFragment extends Fragment
         return view;
     }
 
+    @Override
+    public void onAttach(@NonNull Context context)
+    {
+        try
+        {
+            mOnGridImageSelectedListener = (OnGridImageSelectedListener) getActivity();
+        }
+        catch (ClassCastException e)
+        {
+            Log.e(TAG, "\tonAttach: ClassCastException: " + e.getMessage());
+        }
+
+
+        super.onAttach(context);
+
+    }
 
     public void setupGridView()
     {
-        Log.d(TAG, "setupGridView: Setting up image grid");
+        Log.d(TAG, "\tsetupGridView: Setting up image grid");
 
         final ArrayList<Photo> photos = new ArrayList<>();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
@@ -169,6 +205,20 @@ public class ProfileFragment extends Fragment
                 // Notes: Setting images to the grid
                 GridImageAdapter adapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, "", imgUrls);
                 gridView.setAdapter(adapter);
+
+
+                // Notes: Setting onClickListener onto the gridview items
+                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                    {
+                        // Notes: Use the interface OnGridImageSelectedListener to navigate to the ViewPostFragment
+                        mOnGridImageSelectedListener.onGridImageSelected(photos.get(position), ACTIVITY_NUM);
+                    }
+                });
+
+
             }
 
             @Override

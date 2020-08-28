@@ -5,6 +5,7 @@
 
     <!-- Notes: Fragment Names -->
     <string name="edit_profile_fragment">Edit Profile</string>
+    <string name="view_post_fragment">View Post</string>
     <string name="sign_out_fragment">Sign Out</string>
     <string name="profile_fragment">Profile</string>
 
@@ -44,6 +45,10 @@
     <string name="selected_image">selected_image</string>
     <string name="selected_bitmap">selected_bitmap</string>
     <string name="return_to_fragment">return_to_fragment</string>
+
+    <!-- Notes: Bundle arg names -->
+    <string name="activity_number">activity_number</string>
+
 
     <!-- Notes: Activity Names -->
     <string name="profile_activity">Profile Activity</string>

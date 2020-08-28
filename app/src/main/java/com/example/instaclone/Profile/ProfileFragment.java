@@ -119,6 +119,8 @@ public class ProfileFragment extends Fragment
                 intent.putExtra(getString(R.string.calling_activity), getString(R.string.profile_activity));
                 startActivity(intent);
 
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
                 // Notes: Don't call finish() because we want to be able to navigate back to this activity
             }
         });
@@ -218,6 +220,7 @@ public class ProfileFragment extends Fragment
                 Intent intent = new Intent(mContext, AccountSettingsActivity.class);
                 startActivity(intent);
 
+
             }
         });
     }
@@ -232,7 +235,7 @@ public class ProfileFragment extends Fragment
 
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationView);
 
-        BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationView);
+        BottomNavigationViewHelper.enableNavigation(mContext, getActivity() ,bottomNavigationView);
 
         // Notes: Highlighting the correct Icon when navigating
         Menu menu = bottomNavigationView.getMenu();

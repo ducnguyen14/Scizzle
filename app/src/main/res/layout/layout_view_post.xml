@@ -19,7 +19,6 @@
                 android:layout_height="50dp"
                 android:id="@+id/relLayout1">
 
-
                 <!-- Notes: Profile Picture -->
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="30dp"
@@ -30,7 +29,6 @@
                     app:civ_border_width="0.5dp"
                     android:layout_marginLeft="25dp"
                     android:layout_centerVertical="true"/>
-
 
                 <!-- Notes: Username -->
                 <TextView
@@ -43,7 +41,6 @@
                     android:layout_centerVertical="true"
                     android:id="@+id/username"
                     android:textColor="@color/black"/>
-
 
                 <!-- Notes: Menu Options -->
                 <ImageView
@@ -62,11 +59,113 @@
                 android:id="@+id/post_image"
                 android:layout_below="@id/relLayout1"
                 android:scaleType="centerCrop"/>
+            
+            <!-- Notes: Heart and Comment Icons -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/relLayout2"
+                android:layout_below="@id/post_image">
+
+                <RelativeLayout
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/heartLayout"
+                    android:background="@color/white">
+
+                    <!-- Notes: Red Heart (Liked) -->
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:id="@+id/image_heart_red"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="20dp"
+                        android:src="@drawable/ic_heart_red"
+                        android:visibility="invisible"/>
+
+                    <!-- Notes: Heart Outline (Unliked) -->
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:id="@+id/image_heart"
+                        android:layout_centerInParent="true"
+                        android:layout_marginLeft="20dp"
+                        android:src="@drawable/ic_heart_outline"
+                        android:visibility="visible"/>
+
+                </RelativeLayout>
+
+                <!-- Notes: Speech Bubble icon -->
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/speech_bubble"
+                    android:layout_toRightOf="@id/heartLayout"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_speech_bubble"
+                    android:visibility="visible"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
+
+            <!-- Notes: Post's data -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/relLayout3"
+                android:layout_below="@id/relLayout2"
+                android:padding="20dp"
+                android:layout_marginBottom="50dp">
+
+                <!-- Notes: Liked by (List of likers)... -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Liked by Mitch, Tom, Jesus and 20 others"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:id="@+id/image_likes"/>
+
+                <!-- Notes: Caption -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="duc.nguyen This is my caption #tags"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:id="@+id/image_caption"
+                    android:layout_below="@+id/image_likes"
+                    android:layout_marginTop="15dp"/>
+
+                <!-- Notes: View More Comments -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="View all 2 comments"
+                    android:textColor="@color/grey"
+                    android:textSize="18sp"
+                    android:layout_below="@+id/image_caption"
+                    android:id="@+id/image_comments_link"
+                    android:layout_marginTop="15dp"/>
+
+                <!-- Notes: Timestamp -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2 Days ago"
+                    android:textColor="@color/grey"
+                    android:textSize="18sp"
+                    android:layout_below="@+id/image_comments_link"
+                    android:id="@+id/image_time_posted"
+                    android:layout_marginTop="15dp"/>
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
     </ScrollView>
 
+    <include layout="@layout/layout_bottom_navigation_view"/>
 
 
 

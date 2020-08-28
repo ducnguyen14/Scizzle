@@ -1,6 +1,7 @@
 package com.example.instaclone.Share;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -42,6 +43,8 @@ public class NextActivity extends AppCompatActivity {
     private String mAppend = "file:/";
     private int imageCount = 0;
     private String imgUrl;
+    private Intent intent;
+    private Bitmap bitmap;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,8 +85,26 @@ public class NextActivity extends AppCompatActivity {
 
                 String caption = mCaption.getText().toString();
 
-                // Notes: Consider the case of also uploading profile photos
-                mFirebaseMethods.uploadNewPhoto(getString(R.string.new_photo), caption, imageCount, imgUrl, null);
+
+
+                // Notes: Intent comes from GalleryFragment
+                if(intent.hasExtra(getString(R.string.selected_image)))
+                {
+                    imgUrl = intent.getStringExtra(getString(R.string.selected_image));
+                    mFirebaseMethods.uploadNewPhoto(getString(R.string.new_photo), caption, imageCount, imgUrl, null);
+
+                }
+                // Notes: Intent comes from PhotoFragment (Camera)
+                else if(intent.hasExtra(getString(R.string.selected_bitmap)))
+                {
+                    bitmap = (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap));
+                    mFirebaseMethods.uploadNewPhoto(getString(R.string.new_photo), caption, imageCount, null, bitmap);
+
+
+                }
+
+
+
 
             }
         });
@@ -123,12 +144,28 @@ public class NextActivity extends AppCompatActivity {
      */
     private void setImage()
     {
-        Intent intent = getIntent();
+        intent = getIntent();
         ImageView image = (ImageView) findViewById(R.id.imageShare);
-        imgUrl = intent.getStringExtra(getString(R.string.selected_image));
 
-        // Notes: Universal Image Loader can handle null strings and set default image
-        UniversalImageLoader.setimage(imgUrl, image, null, mAppend);
+        // Notes: Intent comes from GalleryFragment
+        if(intent.hasExtra(getString(R.string.selected_image)))
+        {
+            imgUrl = intent.getStringExtra(getString(R.string.selected_image));
+            Log.d(TAG, "\tsetImage: got new image url: " + imgUrl);
+            // Notes: Universal Image Loader can handle null strings and set default image
+            UniversalImageLoader.setimage(imgUrl, image, null, mAppend);
+        }
+        // Notes: Intent comes from PhotoFragment (Camera)
+        else if(intent.hasExtra(getString(R.string.selected_bitmap)))
+        {
+            bitmap = (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap));
+            Log.d(TAG, "\tsetImage: got new bitmap");
+            image.setImageBitmap(bitmap);
+        }
+
+
+
+
 
     }
 

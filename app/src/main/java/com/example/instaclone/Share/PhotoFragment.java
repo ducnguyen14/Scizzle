@@ -106,7 +106,28 @@ public class PhotoFragment extends Fragment {
             // Notes: Root = ShareActivity
             if(isRootTask())
             {
+                try
+                {
+                    Log.d(TAG, "\tonActivityResult: received new bitmap from camera: " + bitmap);
 
+                    Intent intent = new Intent(getActivity(), NextActivity.class);
+
+                    // Notes: Sending an imgURL from intent, not bitmap
+                    intent.putExtra(getString(R.string.selected_bitmap), bitmap);
+
+                    // Notes: Where fragment should return to
+                    intent.putExtra(getString(R.string.return_to_fragment), getString(R.string.edit_profile_fragment));
+
+                    startActivity(intent);
+
+                    // Notes: Disable back navigation
+                    getActivity().finish();
+
+                }
+                catch (NullPointerException e)
+                {
+                    Log.e(TAG, "\tonActivityResult: NullPointerException: " + e.getMessage());
+                }
 
 
 

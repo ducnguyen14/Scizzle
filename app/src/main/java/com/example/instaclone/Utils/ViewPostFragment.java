@@ -17,7 +17,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.instaclone.R;
+import com.example.instaclone.models.Like;
 import com.example.instaclone.models.Photo;
+import com.example.instaclone.models.User;
 import com.example.instaclone.models.UserAccountSettings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -78,6 +80,8 @@ public class ViewPostFragment extends Fragment {
     private UserAccountSettings mUserAccountSettings;
     private GestureDetector mGestureDetector;
     private Heart mHeart;
+    private Boolean mLikedByCurrentUser;
+    private StringBuilder mUsers;
 
 
 
@@ -153,8 +157,133 @@ public class ViewPostFragment extends Fragment {
             }
         });
 
+    }
+
+    /**
+     * Notes: This method gets the string that is displayed on the post that
+     *      says Liked by x,y,z
+     */
+    private void getLikesString()
+    {
+        Log.d(TAG, "\tgetLikesString: getting likes string");
+        // Notes: If the currentUser liked they're own post, then the heart is red and they also appear in the LikesString
+
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        // Notes: This query is responible for finding all the 'userID' that are attached to the likes of a photo
+        final Query query = reference
+                // Notes: Looking for the node that contains the object we're looking for
+                .child(getString(R.string.dbname_photos))
+                // Notes: Looking for field that is inside the object
+                .orderByChild(mPhoto.getPhoto_id()).equalTo(getString(R.string.field_likes));
+
+        // Notes: Look for all the likes in the photo
+        query.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                mUsers = new StringBuilder();
+
+                // Notes: If a match is found for the particular photo for if there are likes or not
+                for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                {
+                    // Notes: Second query to find the 'userID'
+                    Query query2 = reference
+                            // Notes: Looking for the node that contains the object we're looking for
+                            .child(getString(R.string.dbname_users))
+                            // Notes: Looking for field that is inside the object
+                            .orderByChild(getString(R.string.field_user_id)).equalTo(singleSnapshot.getValue(Like.class).getUser_id());
+
+                    // Notes: Look for all the likes in the photo
+                    query2.addListenerForSingleValueEvent(new ValueEventListener()
+                    {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot)
+                        {
+
+                            // Notes: If a match is found for the particular photo for if there are likes or not
+                            for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                            {
+                                Log.d(TAG, "onDataChange: founnd like: " + singleSnapshot.getValue(User.class).getUsername());
+
+                                mUsers.append(singleSnapshot.getValue(User.class).getUsername());
+                                mUsers.append(", ");
+                            }
+
+                            if(snapshot.exists())
+                            {
+                            }
+
+                            String[] splitUsers = mUsers.toString().split(", ");
+
+                            // Notes: Check if the current user liked their own photo
+                            if(mUsers.toString().contains(mUserAccountSettings.getUsername()))
+                            {
+                                // Notes: Use mLikedByCurrentUser to toggle the heart icon
+                                mLikedByCurrentUser = true;
+                            }
+                            else
+                            {
+                                mLikedByCurrentUser = false;
+                            }
+
+                            int length = splitUsers.length;
+
+                            if(length == 1)
+                            {
+
+                            }
+                            if(length == 2)
+                            {
+
+                            }
+                            if(length == 3)
+                            {
+
+                            }
+                            if(length == 4)
+                            {
+
+                            }
+                            if(length > 4)
+                            {
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error)
+                        {
+
+                        }
+                    });
+
+
+                    /*
+                        Notes: If there are likes, iterate through the likes and gather up all the
+                            usernames of the users who liked the photo
+                     */
+
+                }
+
+
+                if(snapshot.exists())
+                {
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
 
     }
+
 
     public class GestureListener extends GestureDetector.SimpleOnGestureListener
     {
@@ -172,7 +301,44 @@ public class ViewPostFragment extends Fragment {
 
             Log.d(TAG, "onDoubleTap: double tap detected");
 
-            mHeart.toggleLike();
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+            Query query = reference
+                    // Notes: Looking for the node that contains the object we're looking for
+                    .child(getString(R.string.dbname_photos))
+                    // Notes: Looking for field that is inside the object
+                    .orderByChild(mPhoto.getPhoto_id()).equalTo(getString(R.string.field_likes));
+
+            // Notes: Look for all the likes in the photo
+            query.addListenerForSingleValueEvent(new ValueEventListener()
+            {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot)
+                {
+
+                // Notes: If a match is found for the particular photo for if there are likes or not
+                for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                {
+                    // Notes: Case 1 - Then user already liked the photo
+
+                    // Notes: Case 2 - The user has not liked the photo
+
+
+                }
+
+
+                    if(snapshot.exists())
+                    {
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error)
+                {
+
+                }
+            });
 
             return true;
         }
@@ -192,6 +358,7 @@ public class ViewPostFragment extends Fragment {
 
         // Notes: TODO - Temporary substitute
         Query query = reference
+                // Notes: Looking for the node that contains the object we're looking for
                 .child(getString(R.string.dbname_user_account_settings))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 

@@ -67,7 +67,7 @@ public class ViewPostFragment extends Fragment {
     // Notes: Widgets
     private SquareImageView mPostImage;
     private BottomNavigationViewEx bottomNavigationView;
-    private TextView mBackLabel, mCaption, mUsername, mTimestamp;
+    private TextView mBackLabel, mCaption, mUsername, mTimestamp, mLikes;
     private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage;
 
 
@@ -82,6 +82,8 @@ public class ViewPostFragment extends Fragment {
     private Heart mHeart;
     private Boolean mLikedByCurrentUser;
     private StringBuilder mUsers;
+    private String mLikesString = "";
+
 
 
 
@@ -102,11 +104,7 @@ public class ViewPostFragment extends Fragment {
         mHeartRed = (ImageView) view.findViewById(R.id.image_heart_red);
         mHeartWhite = (ImageView) view.findViewById(R.id.image_heart);
         mProfileImage = (ImageView) view.findViewById(R.id.profile_photo);
-
-
-        // Notes: Hard code for now visibility, database will do it later
-        mHeartRed.setVisibility(View.GONE);
-        mHeartWhite.setVisibility(View.VISIBLE);
+        mLikes = (TextView) view.findViewById(R.id.image_likes);
 
 
         mHeart = new Heart(mHeartWhite, mHeartRed);
@@ -117,6 +115,8 @@ public class ViewPostFragment extends Fragment {
             mPhoto = getPhotoFromBundle();
             UniversalImageLoader.setimage(mPhoto.getImage_path(), mPostImage, null, "");
             mActivityNumber = getActivityNumFromBundle();
+            getPhotoDetails();
+            getLikesString();
 
         }
         catch(NullPointerException e)
@@ -128,36 +128,13 @@ public class ViewPostFragment extends Fragment {
 
         setupFirebaseAuth();
         setupBottomNavigationView();
-        getPhotoDetails();
-//        setupWidgets();
 
-        testToggle();
         return view;
     }
 
 
 
-    private void testToggle()
-    {
-        mHeartRed.setOnTouchListener(new View.OnTouchListener()
-        {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Log.d(TAG, "\tonTouch: red heart touch detected");
-                return mGestureDetector.onTouchEvent(event);
-            }
-        });
 
-        mHeartWhite.setOnTouchListener(new View.OnTouchListener()
-        {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Log.d(TAG, "\tonTouch: white heart touch detected");
-                return mGestureDetector.onTouchEvent(event);
-            }
-        });
-
-    }
 
     /**
      * Notes: This method gets the string that is displayed on the post that
@@ -170,7 +147,9 @@ public class ViewPostFragment extends Fragment {
 
         final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
-        // Notes: This query is responible for finding all the 'userID' that are attached to the likes of a photo
+        // Notes: TODO - Prepare for a lot of debugging
+
+        // Notes: This query is responsible for finding all the 'userID' that are attached to the likes of a photo
         final Query query = reference
                 // Notes: Looking for the node that contains the object we're looking for
                 .child(getString(R.string.dbname_photos))
@@ -232,24 +211,35 @@ public class ViewPostFragment extends Fragment {
 
                             if(length == 1)
                             {
-
+                                mLikesString = "Likes by " + splitUsers[0];
                             }
                             if(length == 2)
                             {
-
+                                mLikesString = "likes by " + splitUsers[0] + " and " + splitUsers[1];
                             }
                             if(length == 3)
                             {
-
+                                mLikesString = "likes by " + splitUsers[0]
+                                        + ", " + splitUsers[1]
+                                        + " and " + splitUsers[2];
                             }
                             if(length == 4)
                             {
-
+                                mLikesString = "likes by " + splitUsers[0]
+                                        + ", " + splitUsers[1]
+                                        + ", " + splitUsers[2]
+                                        + " and " + splitUsers[3];
                             }
                             if(length > 4)
                             {
-
+                                mLikesString = "likes by " + splitUsers[0]
+                                        + ", " + splitUsers[1]
+                                        + ", " + splitUsers[2]
+                                        + " and " + (splitUsers.length - 3) + " others";
                             }
+
+
+                            setupWidgets();
 
                         }
 
@@ -271,6 +261,14 @@ public class ViewPostFragment extends Fragment {
 
                 if(snapshot.exists())
                 {
+                }
+
+                // Notes: No likes case
+                if(!snapshot.exists())
+                {
+                    mLikesString = "";
+                    mLikedByCurrentUser = false;
+                    setupWidgets();
                 }
 
             }
@@ -303,6 +301,7 @@ public class ViewPostFragment extends Fragment {
 
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
+            // Notes: TODO - Prepare for a lot of debugging
             Query query = reference
                     // Notes: Looking for the node that contains the object we're looking for
                     .child(getString(R.string.dbname_photos))
@@ -316,19 +315,56 @@ public class ViewPostFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot snapshot)
                 {
 
-                // Notes: If a match is found for the particular photo for if there are likes or not
-                for(DataSnapshot singleSnapshot: snapshot.getChildren())
-                {
-                    // Notes: Case 1 - Then user already liked the photo
+                    // Notes: Only way to enter this loop if there has been any likes on the photo
+                    // Notes: If a match is found for the particular photo for if there are likes or not
+                    for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                    {
+                        String keyID = singleSnapshot.getKey();
 
-                    // Notes: Case 2 - The user has not liked the photo
+                        // Notes: Case 1 - Then user already liked the photo --> Remove their like
+                        if(mLikedByCurrentUser && singleSnapshot.getValue(Like.class).getUser_id()
+                            .equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                        {
+                            // Notes: Removing the correct liker --> the current user
+                            myRef.child(getString(R.string.dbname_photos))
+                                    .child(mPhoto.getPhoto_id())
+                                    .child(getString(R.string.field_likes))
+                                    .child(keyID)
+                                    .removeValue();
+
+                            // Notes: Removing the correct liker --> the current user
+                            myRef.child(getString(R.string.dbname_user_photos))
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(mPhoto.getPhoto_id())
+                                    .child(getString(R.string.field_likes))
+                                    .child(keyID)
+                                    .removeValue();
 
 
-                }
+                            mHeart.toggleLike();
+                            getLikesString();
+                        }
+
+                        // Notes: Case 2 - The current user has not liked the photo
+                        if(!mLikedByCurrentUser)
+                        {
+                            // Notes: Add new like
+                            addNewLike();
+                            break;
+                        }
+
+                    }
 
 
                     if(snapshot.exists())
                     {
+                    }
+
+                    // Notes: No match found
+                    if(!snapshot.exists())
+                    {
+                        // Notes: Add new like
+                        addNewLike();
                     }
 
                 }
@@ -342,6 +378,34 @@ public class ViewPostFragment extends Fragment {
 
             return true;
         }
+    }
+
+
+    private void addNewLike()
+    {
+        String newLikeID = myRef.push().getKey();
+        Like like = new Like();
+        like.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
+        // Notes: Adding a like
+        myRef.child(getString(R.string.dbname_photos))
+                .child(mPhoto.getPhoto_id())
+                .child(getString(R.string.field_likes))
+                .child(newLikeID)
+                .setValue(like);
+
+        // Notes: Adding a like
+        myRef.child(getString(R.string.dbname_user_photos))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(mPhoto.getPhoto_id())
+                .child(getString(R.string.field_likes))
+                .child(newLikeID)
+                .setValue(like);
+
+
+        mHeart.toggleLike();
+        getLikesString();
     }
 
 
@@ -384,7 +448,7 @@ public class ViewPostFragment extends Fragment {
                     mUserAccountSettings = snapshot.getValue(UserAccountSettings.class);
                 }
 
-                setupWidgets();
+//                setupWidgets();
 
             }
 
@@ -414,6 +478,44 @@ public class ViewPostFragment extends Fragment {
         UniversalImageLoader.setimage(mUserAccountSettings.getProfile_photo(), mProfileImage, null, "");
         // Notes: Set username
         mUsername.setText(mUserAccountSettings.getUsername());
+        // Notes: Set likers
+        mLikes.setText(mLikesString);
+
+        // Notes: if current user liked their own photos
+        if(mLikedByCurrentUser)
+        {
+            // Notes: TODO - Do we even need this?
+            mHeartWhite.setVisibility(View.GONE);
+            mHeartRed.setVisibility(View.VISIBLE);
+
+            mHeartRed.setOnTouchListener(new View.OnTouchListener()
+            {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Log.d(TAG, "\tonTouch: red heart touch detected");
+                    return mGestureDetector.onTouchEvent(event);
+                }
+            });
+        }
+        // Notes: User didn't like their own photo
+        else
+        {
+            // Notes: TODO - Do we even need this?
+            mHeartWhite.setVisibility(View.VISIBLE);
+            mHeartRed.setVisibility(View.GONE);
+
+            mHeartWhite.setOnTouchListener(new View.OnTouchListener()
+            {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Log.d(TAG, "\tonTouch: white heart touch detected");
+                    return mGestureDetector.onTouchEvent(event);
+                }
+            });
+        }
+
+
+
 
     }
 

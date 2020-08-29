@@ -7,20 +7,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.instaclone.Utils.BottomNavigationViewHelper;
+import com.example.instaclone.Utils.FirebaseMethods;
+import com.example.instaclone.Utils.GridImageAdapter;
 import com.example.instaclone.Utils.SquareImageView;
 import com.example.instaclone.Utils.UniversalImageLoader;
 import com.example.instaclone.models.Photo;
+import com.example.instaclone.models.UserAccountSettings;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -43,6 +58,15 @@ public class ViewPostFragment extends Fragment {
         setArguments(new Bundle());
     }
 
+    // Notes: Firebase
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference myRef;
+    private FirebaseMethods mFirebaseMethods;
+
+
+
     // Notes: Widgets
     private SquareImageView mPostImage;
     private BottomNavigationViewEx bottomNavigationView;
@@ -54,6 +78,9 @@ public class ViewPostFragment extends Fragment {
     // Notes: Variables
     private Photo mPhoto;
     private int mActivityNumber = 0;
+    private String photoUsername = "";
+    private String profilePhotoUrl = "";
+    private UserAccountSettings mUserAccountSettings;
 
 
     @Nullable
@@ -88,10 +115,62 @@ public class ViewPostFragment extends Fragment {
 
         }
 
+        setupFirebaseAuth();
         setupBottomNavigationView();
-        setupWidgets();
+        getPhotoDetails();
+//        setupWidgets();
 
         return view;
+    }
+
+    private void getPhotoDetails()
+    {
+        Log.d(TAG, "\tgetPhotoDetails: retrieving photo details");
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        // Notes: TODO - Original Code - Doesn't work because on Firebase, user_account_settings does NOT have the attribute userID
+//        Query query = reference
+//                .child(getString(R.string.dbname_user_account_settings))
+//                .orderByChild(getString(R.string.field_user_id)).equalTo(mPhoto.getUser_id());
+
+        // Notes: TODO - Temporary substitute
+        Query query = reference
+                .child(getString(R.string.dbname_user_account_settings))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        query.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                // Notes: If a match is found
+                // Notes: TODO - Original code doesn't work
+//                for(DataSnapshot singleSnapshot: snapshot.getChildren())
+//                {
+//                    Log.d(TAG, "onDataChange: \n\n\tHERE");
+//
+//                    mUserAccountSettings = singleSnapshot.getValue(UserAccountSettings.class);
+//
+//                }
+
+                // Notes: TODO - Temporary substitute
+                // Notes: if the DataSnapshot does not exists (No match found)
+                if(snapshot.exists())
+                {
+                    mUserAccountSettings = snapshot.getValue(UserAccountSettings.class);
+                }
+
+                setupWidgets();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
     }
 
 
@@ -107,6 +186,12 @@ public class ViewPostFragment extends Fragment {
         {
             mTimestamp.setText("Today");
         }
+
+        // Notes: Set Profile photo
+        UniversalImageLoader.setimage(mUserAccountSettings.getProfile_photo(), mProfileImage, null, "");
+        // Notes: Set username
+        mUsername.setText(mUserAccountSettings.getUsername());
+
     }
 
 
@@ -200,6 +285,76 @@ public class ViewPostFragment extends Fragment {
 
 
     }
+
+
+    /**
+     * ***************************** Firebase *****************************
+     */
+
+
+    /**
+     * Notes: Setup the firebase auth object
+     */
+    private void setupFirebaseAuth()
+    {
+        Log.d(TAG, "\tsetupFirebaseAuth: setting up firebase auth");
+
+        /*
+            Notes: FirebaseAuth works on an Instance basis,the same FirebaseAuth
+                object is usable app-wide
+         */
+        mAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        myRef = mFirebaseDatabase.getReference();
+
+
+
+        // Notes: Checks if a user auth state has changed --> Signed in or signed out
+        mAuthListener = new FirebaseAuth.AuthStateListener()
+        {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth)
+            {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                if(user != null)
+                {
+                    // Notes: User is signed in
+                    Log.d(TAG, "\tonAuthStateChanged: signed in: " + user.getUid());
+                }
+                else
+                {
+                    // Notes: User is signed out
+                    Log.d(TAG, "\tonAuthStateChanged: signed out");
+                }
+            }
+        };
+
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+
+
+    }
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+
+        if(mAuthListener != null)
+        {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+
+    }
+
+
+
 
 
 }

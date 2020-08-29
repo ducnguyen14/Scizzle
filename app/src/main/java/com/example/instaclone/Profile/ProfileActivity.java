@@ -1,33 +1,19 @@
 package com.example.instaclone.Profile;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.instaclone.R;
-import com.example.instaclone.Utils.BottomNavigationViewHelper;
-import com.example.instaclone.Utils.GridImageAdapter;
-import com.example.instaclone.Utils.UniversalImageLoader;
-import com.example.instaclone.ViewPostFragment;
+import com.example.instaclone.Utils.ViewPostFragment;
 import com.example.instaclone.models.Photo;
-import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 public class ProfileActivity extends AppCompatActivity implements ProfileFragment.OnGridImageSelectedListener{
     private static final String TAG = "ProfileActivity/DEBUG";

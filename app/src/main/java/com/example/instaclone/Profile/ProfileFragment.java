@@ -26,6 +26,7 @@ import com.example.instaclone.Utils.BottomNavigationViewHelper;
 import com.example.instaclone.Utils.FirebaseMethods;
 import com.example.instaclone.Utils.GridImageAdapter;
 import com.example.instaclone.Utils.UniversalImageLoader;
+import com.example.instaclone.models.Like;
 import com.example.instaclone.models.Photo;
 import com.example.instaclone.models.User;
 import com.example.instaclone.models.UserAccountSettings;
@@ -42,6 +43,9 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -185,7 +189,41 @@ public class ProfileFragment extends Fragment
             {
                 for(DataSnapshot singleSnapshot: snapshot.getChildren())
                 {
-                    photos.add(singleSnapshot.getValue(Photo.class));
+                    // Notes: Error -   com.google.firebase.database.DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
+//                    photos.add(singleSnapshot.getValue(Photo.class));
+
+                    // Notes: (Solution) Type cast the snapshot to a hashmap and then add the fields manually to the photo
+
+                    // Notes: Step 1) Type cast snapshot into hashmap
+                    Photo photo = new Photo();
+                    Map<String, Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
+
+                    // Notes: Step 2) Add fields manually to photo object
+                    photo.setCaption(objectMap.get(getString(R.string.field_caption)).toString());
+                    photo.setTags(objectMap.get(getString(R.string.field_tags)).toString());
+                    photo.setPhoto_id(objectMap.get(getString(R.string.field_photo_id)).toString());
+                    photo.setUser_id(objectMap.get(getString(R.string.field_user_id)).toString());
+                    photo.setDate_created(objectMap.get(getString(R.string.field_date_created)).toString());
+                    photo.setImage_path(objectMap.get(getString(R.string.field_image_path)).toString());
+
+                    List<Like> likesList = new ArrayList<Like>();
+                    for(DataSnapshot datasnapshot: singleSnapshot
+                            .child(getString(R.string.field_likes))
+                            .getChildren())
+                    {
+                        // Notes: Getting individual likes
+                        Like like = new Like();
+                        like.setUser_id(datasnapshot.getValue(Like.class).getUser_id());
+
+                        // Notes: Adding to a list of likes
+                        likesList.add(like);
+                    }
+
+                    photo.setLikes(likesList);
+
+                    // Notes: Step 3) Add photo object to list of photos to be displayed on gridview
+                    photos.add(photo);
+
                 }
 
                 // Notes: Set up image grid

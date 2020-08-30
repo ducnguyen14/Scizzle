@@ -153,8 +153,10 @@ public class ViewPostFragment extends Fragment {
         final Query query = reference
                 // Notes: Looking for the node that contains the object we're looking for
                 .child(getString(R.string.dbname_photos))
-                // Notes: Looking for field that is inside the object
-                .orderByChild(mPhoto.getPhoto_id()).equalTo(getString(R.string.field_likes));
+                // Notes: Looking for the node that contains the object we're looking for
+                .child(mPhoto.getPhoto_id())
+                // Notes: Looking for the node that contains the object we're looking for
+                .child(getString(R.string.field_likes));
 
         // Notes: Look for all the likes in the photo
         query.addListenerForSingleValueEvent(new ValueEventListener()
@@ -211,28 +213,28 @@ public class ViewPostFragment extends Fragment {
 
                             if(length == 1)
                             {
-                                mLikesString = "Likes by " + splitUsers[0];
+                                mLikesString = "Liked by " + splitUsers[0];
                             }
                             if(length == 2)
                             {
-                                mLikesString = "likes by " + splitUsers[0] + " and " + splitUsers[1];
+                                mLikesString = "Liked by " + splitUsers[0] + " and " + splitUsers[1];
                             }
                             if(length == 3)
                             {
-                                mLikesString = "likes by " + splitUsers[0]
+                                mLikesString = "Liked by " + splitUsers[0]
                                         + ", " + splitUsers[1]
                                         + " and " + splitUsers[2];
                             }
                             if(length == 4)
                             {
-                                mLikesString = "likes by " + splitUsers[0]
+                                mLikesString = "Liked by " + splitUsers[0]
                                         + ", " + splitUsers[1]
                                         + ", " + splitUsers[2]
                                         + " and " + splitUsers[3];
                             }
                             if(length > 4)
                             {
-                                mLikesString = "likes by " + splitUsers[0]
+                                mLikesString = "Liked by " + splitUsers[0]
                                         + ", " + splitUsers[1]
                                         + ", " + splitUsers[2]
                                         + " and " + (splitUsers.length - 3) + " others";
@@ -305,8 +307,10 @@ public class ViewPostFragment extends Fragment {
             Query query = reference
                     // Notes: Looking for the node that contains the object we're looking for
                     .child(getString(R.string.dbname_photos))
-                    // Notes: Looking for field that is inside the object
-                    .orderByChild(mPhoto.getPhoto_id()).equalTo(getString(R.string.field_likes));
+                    // Notes: Looking for the node that contains the object we're looking for
+                    .child(mPhoto.getPhoto_id())
+                    // Notes: Looking for the node that contains the object we're looking for
+                    .child(getString(R.string.field_likes));
 
             // Notes: Look for all the likes in the photo
             query.addListenerForSingleValueEvent(new ValueEventListener()

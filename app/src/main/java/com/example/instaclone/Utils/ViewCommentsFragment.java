@@ -32,7 +32,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class ViewCommentsFragment extends Fragment {
-    private static final String TAG = "ViewCommentsFragment/DEBUG";
+    private static final String TAG = "ViewCommentsFrag/DEBUG";
 
     public ViewCommentsFragment()
     {

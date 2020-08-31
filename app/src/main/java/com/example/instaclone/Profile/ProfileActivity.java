@@ -24,7 +24,7 @@ public class ProfileActivity extends AppCompatActivity implements
 
 
     /**
-     * Notes: This method navigates to the comment thread
+     * Notes: This method navigates to the ViewCommentsFragment
      * @param photo
      */
     @Override

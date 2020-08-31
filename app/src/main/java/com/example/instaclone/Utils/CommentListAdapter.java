@@ -55,7 +55,7 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
     /**
      * Notes: Using the ViewHolder build pattern to view the images.
-     *      The ViewHolder doesn’t load the all the widgets at once.
+     *      The ViewHolder doesn’t load the all the widgets at once. Widgets are loaded into memory.
      *      It only loads a few of them to make the app faster (similar to RecyclerView)
      */
     private static class ViewHolder{

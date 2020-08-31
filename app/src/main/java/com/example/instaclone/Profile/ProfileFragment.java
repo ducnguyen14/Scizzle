@@ -154,6 +154,10 @@ public class ProfileFragment extends Fragment
         return view;
     }
 
+    /**
+     * Notes: Always need this method when we use interfaces
+     * @param context
+     */
     @Override
     public void onAttach(@NonNull Context context)
     {

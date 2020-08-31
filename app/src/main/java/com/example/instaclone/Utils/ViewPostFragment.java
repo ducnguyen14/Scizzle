@@ -45,6 +45,7 @@ public class ViewPostFragment extends Fragment {
 
     // Notes: Implemented in ProfileActivity, ProfileActivity will navigate us to ViewCommentsFragment
     public interface OnCommentThreadSelectedListener{
+        // Notes: Passing the current photo to the ViewCommentsFragment
         void onCommentThreadSelectedListener(Photo photo);
     }
 
@@ -145,7 +146,10 @@ public class ViewPostFragment extends Fragment {
     }
 
 
-
+    /**
+     * Notes: Always need this method when we use interfaces
+     * @param context
+     */
     @Override
     public void onAttach(Context context)
     {
@@ -529,6 +533,7 @@ public class ViewPostFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back");
+                // Notes: Passing the current photo to the ViewCommentsFragment
                 mOnCommentThreadSelectedListener.onCommentThreadSelectedListener(mPhoto);
             }
         });

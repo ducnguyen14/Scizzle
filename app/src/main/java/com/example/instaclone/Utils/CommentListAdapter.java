@@ -120,7 +120,7 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
 
 
-        // Notes: TODO - Prepare for debugging
+        // Notes: TODO - Prepare for debugging USERNAME AND PROFILE ISNT SHOWING UP
         // Notes: Set the username and profile image
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
@@ -138,6 +138,7 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
                 // Notes: If a match is found
                 for(DataSnapshot singleSnapshot :  dataSnapshot.getChildren())
                 {
+                    Log.d(TAG, "\tonDataChange: Setting username and Profile Picture!!!");
                     // Notes: Set username
                     holder.username.setText(
                             singleSnapshot.getValue(UserAccountSettings.class).getUsername());

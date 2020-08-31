@@ -35,7 +35,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
-                    android:text="duc.nguyen"
+                    android:text="Username"
                     android:layout_toRightOf="@+id/profile_photo"
                     android:layout_marginLeft="10dp"
                     android:layout_centerVertical="true"
@@ -124,7 +124,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Liked by Mitch, Tom, Jesus and 20 others"
+                    android:text="Liked by x, y, z and 20 others"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:id="@+id/image_likes"/>
@@ -133,7 +133,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="duc.nguyen This is my caption #tags"
+                    android:text="Username This is my caption #tags"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:id="@+id/image_caption"
@@ -144,7 +144,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="View all 2 comments"
+                    android:text="View all x comments"
                     android:textColor="@color/grey"
                     android:textSize="18sp"
                     android:layout_below="@+id/image_caption"
@@ -155,7 +155,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2 Days ago"
+                    android:text="X Days ago"
                     android:textColor="@color/grey"
                     android:textSize="18sp"
                     android:layout_below="@+id/image_comments_link"

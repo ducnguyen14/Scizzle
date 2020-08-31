@@ -32,14 +32,14 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class ViewCommentsFragment extends Fragment {
-    private static final String TAG = "ViewCommentsFragment";
+    private static final String TAG = "ViewCommentsFragment/DEBUG";
 
     public ViewCommentsFragment()
     {
         super();
 
         /*
-            Notes: An empty bundle can cause a NullPtrException. Need to always do setArguments to new
+            Notes: An empty bundle can cause a NullPtrException when receiving from an interface. Need to always do setArguments to new
                 bundle in the constructor when passing information through a bundle. (We passed arguments
                 through bundle from OnCommentThreadSelectedListener interface)
 

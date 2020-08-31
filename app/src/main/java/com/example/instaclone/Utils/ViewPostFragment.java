@@ -58,7 +58,7 @@ public class ViewPostFragment extends Fragment {
         super();
 
         /*
-            Notes: An empty bundle can cause a NullPtrException. Need to always do setArguments to new
+            Notes: An empty bundle can cause a NullPtrException when receiving from an interface. Need to always do setArguments to new
                 bundle in the constructor when passing information through a bundle. (We passed arguments
                 through bundle from OnGridImageSelectedListener interface)
 
@@ -226,7 +226,7 @@ public class ViewPostFragment extends Fragment {
                             String[] splitUsers = mUsers.toString().split(", ");
 
                             // Notes: Check if the current user liked their own photo
-                            if(mUsers.toString().contains(mUserAccountSettings.getUsername()))
+                            if(mUsers.toString().contains(mUserAccountSettings.getUsername() + ","))
                             {
                                 // Notes: Use mLikedByCurrentUser to toggle the heart icon
                                 mLikedByCurrentUser = true;

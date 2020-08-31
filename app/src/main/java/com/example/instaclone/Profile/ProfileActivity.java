@@ -23,6 +23,10 @@ public class ProfileActivity extends AppCompatActivity implements
     private static final String TAG = "ProfileActivity/DEBUG";
 
 
+    /**
+     * Notes: This method navigates to the comment thread
+     * @param photo
+     */
     @Override
     public void onCommentThreadSelectedListener(Photo photo)
     {

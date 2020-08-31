@@ -159,6 +159,7 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
             }
         });
 
+        // Notes: TODO - i think we can take out the try catch since error is gone (Don't take out if)
         try
         {
             // Notes: First comment of the photo is really the caption

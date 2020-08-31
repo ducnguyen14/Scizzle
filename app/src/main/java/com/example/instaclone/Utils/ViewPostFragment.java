@@ -1,5 +1,6 @@
 package com.example.instaclone.Utils;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -42,6 +43,16 @@ public class ViewPostFragment extends Fragment {
 
     private static final String TAG = "ViewPostFragment/DEBUG";
 
+    // Notes: Implemented in ProfileActivity, ProfileActivity will navigate us to ViewCommentsFragment
+    public interface OnCommentThreadSelectedListener{
+        void onCommentThreadSelectedListener(Photo photo);
+    }
+
+    OnCommentThreadSelectedListener mOnCommentThreadSelectedListener;
+
+
+
+
     public ViewPostFragment()
     {
         super();
@@ -68,7 +79,7 @@ public class ViewPostFragment extends Fragment {
     private SquareImageView mPostImage;
     private BottomNavigationViewEx bottomNavigationView;
     private TextView mBackLabel, mCaption, mUsername, mTimestamp, mLikes;
-    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage;
+    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mComment;
 
 
 
@@ -105,6 +116,7 @@ public class ViewPostFragment extends Fragment {
         mHeartWhite = (ImageView) view.findViewById(R.id.image_heart);
         mProfileImage = (ImageView) view.findViewById(R.id.profile_photo);
         mLikes = (TextView) view.findViewById(R.id.image_likes);
+        mComment = (ImageView) view.findViewById(R.id.speech_bubble);
 
 
         mHeart = new Heart(mHeartWhite, mHeartRed);
@@ -133,6 +145,21 @@ public class ViewPostFragment extends Fragment {
     }
 
 
+
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+
+        try
+        {
+            mOnCommentThreadSelectedListener = (OnCommentThreadSelectedListener) getActivity();
+        }
+        catch(ClassCastException e)
+        {
+            Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage() );
+        }
+    }
 
 
 
@@ -484,6 +511,29 @@ public class ViewPostFragment extends Fragment {
         mUsername.setText(mUserAccountSettings.getUsername());
         // Notes: Set likers
         mLikes.setText(mLikesString);
+        // Notes: Set caption
+        mCaption.setText(mPhoto.getCaption());
+        // Notes: Back Arrow
+        mBackArrow.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Log.d(TAG, "onClick: navigating back");
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+        // Notes: Navigating to comments
+        mComment.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: navigating back");
+                mOnCommentThreadSelectedListener.onCommentThreadSelectedListener(mPhoto);
+            }
+        });
+
+
 
         // Notes: if current user liked their own photos
         if(mLikedByCurrentUser)
@@ -517,6 +567,8 @@ public class ViewPostFragment extends Fragment {
                 }
             });
         }
+
+
 
 
 

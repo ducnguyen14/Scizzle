@@ -12,12 +12,38 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.instaclone.R;
+import com.example.instaclone.Utils.ViewCommentsFragment;
 import com.example.instaclone.Utils.ViewPostFragment;
 import com.example.instaclone.models.Photo;
 
-public class ProfileActivity extends AppCompatActivity implements ProfileFragment.OnGridImageSelectedListener{
+public class ProfileActivity extends AppCompatActivity implements
+        ProfileFragment.OnGridImageSelectedListener ,
+        ViewPostFragment.OnCommentThreadSelectedListener{
+
     private static final String TAG = "ProfileActivity/DEBUG";
 
+
+    @Override
+    public void onCommentThreadSelectedListener(Photo photo)
+    {
+        Log.d(TAG, "\tonCommentThreadSelectedListener:  selected a comment thread");
+
+        ViewCommentsFragment fragment = new ViewCommentsFragment();
+
+        // Notes: Passing Photo to fragment
+        Bundle args = new Bundle();
+        args.putParcelable(getString(R.string.photo), photo);
+        fragment.setArguments(args);
+
+        /* Notes: Fragments have a different stack than activites and doesn't keep track
+            of own stack. We need to keep track of it
+         */
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.container, fragment);
+        transaction.addToBackStack(getString(R.string.view_comments_fragment));
+        transaction.commit();
+    }
 
 
     @Override
@@ -27,12 +53,16 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
 
         ViewPostFragment fragment = new ViewPostFragment();
 
+        // Notes: Passing Photo to fragment
         Bundle args = new Bundle();
         args.putParcelable(getString(R.string.photo), photo);
         args.putInt(getString(R.string.activity_number), activityNumber);
 
         fragment.setArguments(args);
 
+        /* Notes: Fragments have a different stack than activites and doesn't keep track
+            of own stack. We need to keep track of it
+         */
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.container, fragment);
@@ -57,7 +87,8 @@ public class ProfileActivity extends AppCompatActivity implements ProfileFragmen
     private ImageView profilePhoto;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 

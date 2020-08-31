@@ -5,8 +5,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
-    <!-- Notes: This layout is that content for a comment inside
-            the listview for fragment_view_comments.xml -->
+    <!-- Notes: This layout is the content for a comment inside
+            the listview for fragment_view_comments.xml.
+             Used in CommentListAdapter.java -->
 
     <!-- Notes: Profile Photo -->
     <de.hdodenhof.circleimageview.CircleImageView

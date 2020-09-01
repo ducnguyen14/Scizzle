@@ -26,7 +26,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 public class HomeActivity extends AppCompatActivity {
 
     // Notes: Constants
-    private static final String TAG = "HomeActivity/DEBUG";
+    private static final String TAG = "HomeActivity/DEBU";
     private static final int ACTIVITY_NUM = 0;
     private Context mContext = HomeActivity.this;
 

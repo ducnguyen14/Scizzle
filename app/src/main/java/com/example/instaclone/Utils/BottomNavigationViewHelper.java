@@ -18,7 +18,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 public class BottomNavigationViewHelper {
-    private static final String TAG = "BottomNavViewHelp/DEBUG";
+    private static final String TAG = "BottomNavViewHelp/DEBU";
 
     /**
      * Notes: BottomNavigationView setup

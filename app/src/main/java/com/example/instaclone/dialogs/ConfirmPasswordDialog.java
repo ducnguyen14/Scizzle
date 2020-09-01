@@ -16,7 +16,7 @@ import com.example.instaclone.R;
 
 public class ConfirmPasswordDialog extends DialogFragment {
 
-    private static final String TAG = "ConfirmPassDialog/DEBUG";
+    private static final String TAG = "ConfirmPassDialog/DEBU";
 
 
     public interface OnConfirmPasswordListener

@@ -26,6 +26,7 @@ import com.example.instaclone.Utils.BottomNavigationViewHelper;
 import com.example.instaclone.Utils.FirebaseMethods;
 import com.example.instaclone.Utils.GridImageAdapter;
 import com.example.instaclone.Utils.UniversalImageLoader;
+import com.example.instaclone.models.Comment;
 import com.example.instaclone.models.Like;
 import com.example.instaclone.models.Photo;
 import com.example.instaclone.models.User;
@@ -209,6 +210,26 @@ public class ProfileFragment extends Fragment
                     photo.setUser_id(objectMap.get(getString(R.string.field_user_id)).toString());
                     photo.setDate_created(objectMap.get(getString(R.string.field_date_created)).toString());
                     photo.setImage_path(objectMap.get(getString(R.string.field_image_path)).toString());
+
+                    ArrayList<Comment> comments = new ArrayList<Comment>();
+
+                    for(DataSnapshot datasnapshot: singleSnapshot
+                            .child(getString(R.string.field_comments))
+                            .getChildren())
+                    {
+                        // Notes: Getting individual comment
+                        Comment comment = new Comment();
+                        comment.setUser_id(datasnapshot.getValue(Comment.class).getUser_id());
+                        comment.setComment(datasnapshot.getValue(Comment.class).getComment());
+                        comment.setDate_created(datasnapshot.getValue(Comment.class).getDate_created());
+
+                        // Notes: Adding to a list of comments
+                        comments.add(comment);
+                    }
+
+                    // Notes: Adding comments to the Photo
+                    photo.setComments(comments);
+
 
                     List<Like> likesList = new ArrayList<Like>();
                     for(DataSnapshot datasnapshot: singleSnapshot

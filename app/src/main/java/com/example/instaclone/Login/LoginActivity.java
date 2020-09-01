@@ -25,7 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "LoginActivity/DEBUG";
+    private static final String TAG = "LoginActivity/DEBU";
 
 
     // Notes: Firebase

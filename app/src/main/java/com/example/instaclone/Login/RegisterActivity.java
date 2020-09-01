@@ -27,7 +27,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class RegisterActivity extends AppCompatActivity {
-    private static final String TAG = "RegisterActivity/DEBUG";
+    private static final String TAG = "RegisterActivity/DEBU";
 
 
     private Context mContext;

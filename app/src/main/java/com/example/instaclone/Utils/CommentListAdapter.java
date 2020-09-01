@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import com.example.instaclone.R;
 import com.example.instaclone.models.Comment;
 import com.example.instaclone.models.UserAccountSettings;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -118,17 +119,21 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
         }
 
 
-
-
-        // Notes: TODO - Prepare for debugging USERNAME AND PROFILE ISNT SHOWING UP
+        // Notes: TODO - Original Code - Doesn't work because on Firebase, user_account_settings does NOT have the attribute userID
         // Notes: Set the username and profile image
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+//        Query query = reference
+////                // Notes: Looking for the node that contains the object we're looking for
+////                .child(mContext.getString(R.string.dbname_user_account_settings))
+////                // Notes: Looking for field that is inside the object
+////                .orderByChild(mContext.getString(R.string.field_user_id))
+////                .equalTo(getItem(position).getUser_id());
+
+        // Notes: TODO - Temporary substitute
         Query query = reference
                 // Notes: Looking for the node that contains the object we're looking for
                 .child(mContext.getString(R.string.dbname_user_account_settings))
-                // Notes: Looking for field that is inside the object
-                .orderByChild(mContext.getString(R.string.field_user_id))
-                .equalTo(getItem(position).getUser_id());
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         query.addListenerForSingleValueEvent(new ValueEventListener()
         {
@@ -136,21 +141,38 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
             public void onDataChange(DataSnapshot dataSnapshot)
             {
                 // Notes: If a match is found
-                for(DataSnapshot singleSnapshot :  dataSnapshot.getChildren())
+                // Notes: TODO - Original code doesn't work
+//                for(DataSnapshot singleSnapshot :  dataSnapshot.getChildren())
+//                {
+//                    Log.d(TAG, "\tonDataChange: Setting username and Profile Picture!!!");
+//                    // Notes: Set username
+//                    holder.username.setText(
+//                            singleSnapshot.getValue(UserAccountSettings.class).getUsername());
+//
+//                    ImageLoader imageLoader = ImageLoader.getInstance();
+//
+//                    // Notes: Set profile photo
+//                    imageLoader.displayImage(
+//                            singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
+//                            holder.profileImage);
+//                }
+
+                // Notes: TODO - Temporary substitute
+                // Notes: if the DataSnapshot does not exists (No match found)
+                if(dataSnapshot.exists())
                 {
                     Log.d(TAG, "\tonDataChange: Setting username and Profile Picture!!!");
                     // Notes: Set username
                     holder.username.setText(
-                            singleSnapshot.getValue(UserAccountSettings.class).getUsername());
+                            dataSnapshot.getValue(UserAccountSettings.class).getUsername());
 
                     ImageLoader imageLoader = ImageLoader.getInstance();
 
                     // Notes: Set profile photo
                     imageLoader.displayImage(
-                            singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
+                            dataSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
                             holder.profileImage);
                 }
-
             }
 
             @Override

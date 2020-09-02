@@ -1,6 +1,7 @@
 package com.example.instaclone.Search;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.instaclone.Profile.ProfileActivity;
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.BottomNavigationViewHelper;
 import com.example.instaclone.Utils.UserListAdapter;
@@ -165,10 +167,22 @@ public class SearchActivity extends AppCompatActivity {
                 Log.d(TAG, "onItemClick: selected user: " + mUserList.get(position).toString());
 
                 // Notes: Navigate to profile activity (2 cases)
+                Intent intent = new Intent(SearchActivity.this, ProfileActivity.class);
 
-                // Notes: Case 1 - Navigating to your own profile
+                // Notes: This lets ProfileActivity.java know this intent is from SearchActivity.java
+                intent.putExtra(getString(R.string.calling_activity), getString(R.string.search_activity));
 
-                // Notes: Case 2 - Navigating to a another user's profile
+                /*
+                    Notes: Case 1 - Navigating to your own profile.
+                           Case 2 - Navigating to a another user's profile
+                           Solution - Pass which user is in the intent.
+                 */
+
+
+                intent.putExtra(getString(R.string.intent_user), mUserList.get(position));
+
+                startActivity(intent);
+
             }
         });
 

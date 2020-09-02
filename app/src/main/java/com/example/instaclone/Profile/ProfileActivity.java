@@ -1,10 +1,12 @@
 package com.example.instaclone.Profile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 
 import androidx.annotation.Nullable;
@@ -14,6 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.ViewCommentsFragment;
 import com.example.instaclone.Utils.ViewPostFragment;
+import com.example.instaclone.Utils.ViewProfileFragment;
 import com.example.instaclone.models.Photo;
 
 public class ProfileActivity extends AppCompatActivity implements
@@ -109,15 +112,60 @@ public class ProfileActivity extends AppCompatActivity implements
     {
         Log.d(TAG, "\tinit: inflating " + getString(R.string.profile_fragment));
 
-        ProfileFragment fragment = new ProfileFragment();
-
-        /* Notes: Fragments have a different stack than activites and doesn't keep track
-            of own stack. We need to keep track of it
+        /*
+            Notes: Get incoming intent from SearchActivity.java and check for
+                what extras is given to navigate to the
+                according Fragment (ProfileFragment or ViewProfileFragment)
          */
-        FragmentTransaction transaction = ProfileActivity.this.getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, fragment);
-        transaction.addToBackStack(getString(R.string.profile_fragment));
-        transaction.commit();
+        Intent intent = getIntent();
+
+        // Notes: Navigate to ViewProfileFragment
+        if(intent.hasExtra(getString(R.string.calling_activity)))
+        {
+            Log.d(TAG, "\tinit: searching for user object attached as intent extra");
+
+            if(intent.hasExtra(getString(R.string.intent_user)))
+            {
+                Log.d(TAG, "\tinit: inflating ViewProfileFragment");
+
+                ViewProfileFragment fragment = new ViewProfileFragment();
+
+                // Notes: Passing User to fragment
+                Bundle args = new Bundle();
+                args.putParcelable(getString(R.string.intent_user), intent.getParcelableExtra(getString(R.string.intent_user)));
+                fragment.setArguments(args);
+
+                /* Notes: Fragments have a different stack than activites and doesn't keep track
+                    of own stack. We need to keep track of it
+                 */
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.container, fragment);
+                transaction.addToBackStack(getString(R.string.view_profile_fragment));
+                transaction.commit();
+            }
+            else
+            {
+                Toast.makeText(mContext, "Something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        }
+        // Notes: Navigate to ProfileFragment
+        else
+        {
+            Log.d(TAG, "\tinit: inflating ProfileFragment");
+
+            ProfileFragment fragment = new ProfileFragment();
+
+            /* Notes: Fragments have a different stack than activites and doesn't keep track
+                of own stack. We need to keep track of it
+             */
+            FragmentTransaction transaction = ProfileActivity.this.getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.container, fragment);
+            transaction.addToBackStack(getString(R.string.profile_fragment));
+            transaction.commit();
+        }
+
+
 
 
     }

@@ -9,5 +9,6 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="link_blue">#3498DB</color>
+    <color name="dark_red">#cc0000</color>
 
 </resources>

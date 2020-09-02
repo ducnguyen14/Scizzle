@@ -9,12 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.instaclone.R;
-import com.example.instaclone.models.Comment;
+import com.example.instaclone.models.User;
 import com.example.instaclone.models.UserAccountSettings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -25,33 +24,28 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CommentListAdapter extends ArrayAdapter<Comment> {
+public class UserListAdapter extends ArrayAdapter<User>{
+    private static final String TAG = "UserListAdapter/DEBUG";
 
-    private static final String TAG = "CommentListAdapt/DEBUG";
 
     private LayoutInflater mInflater;
+    private List<User> mUsers = null;
     private int layoutResource;
     private Context mContext;
 
 
-    public CommentListAdapter(@NonNull Context context, @LayoutRes int resource,
-                              @NonNull List<Comment> objects)
-    {
-        // Notes: Need to use super because we will be referencing items from the List<Comment> objects.
+    public UserListAdapter(@NonNull Context context, int resource, @NonNull List<User> objects) {
+        // Notes: Need to use super because we will be referencing items from the List<User> objects.
         super(context, resource, objects);
-        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mContext = context;
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layoutResource = resource;
+        this.mUsers = objects;
+
     }
 
     /**
@@ -60,9 +54,8 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
      *      It only loads a few of them to make the app faster (similar to RecyclerView)
      */
     private static class ViewHolder{
-        TextView comment, username, timestamp, reply, likes;
+        TextView username, email;
         CircleImageView profileImage;
-        ImageView like;
     }
 
 
@@ -73,18 +66,13 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
         // Notes: ViewHolder build pattern (Similar to RecyclerView)
         final ViewHolder holder;
 
-        if(convertView == null)
-        {
+        if (convertView == null) {
             convertView = mInflater.inflate(layoutResource, parent, false);
             holder = new ViewHolder();
 
-            holder.comment = (TextView) convertView.findViewById(R.id.comment);
-            holder.username = (TextView) convertView.findViewById(R.id.comment_username);
-            holder.timestamp = (TextView) convertView.findViewById(R.id.comment_time_posted);
-            holder.reply = (TextView) convertView.findViewById(R.id.comment_reply);
-            holder.like = (ImageView) convertView.findViewById(R.id.comment_like);
-            holder.likes = (TextView) convertView.findViewById(R.id.comment_likes);
-            holder.profileImage = (CircleImageView) convertView.findViewById(R.id.comment_profile_image);
+            holder.username = (TextView) convertView.findViewById(R.id.username);
+            holder.email = (TextView) convertView.findViewById(R.id.email);
+            holder.profileImage = (CircleImageView) convertView.findViewById(R.id.profile_image);
 
             /*
                 Notes: Tag is a way you can store widgets in memory.
@@ -93,9 +81,7 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
                     to slow down.
              */
             convertView.setTag(holder);
-        }
-        else
-        {
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
@@ -104,23 +90,12 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
                 we can access it via getItem(int) or else getItem(int) will return null
          */
 
-        // Notes: Set the comment
-        holder.comment.setText(getItem(position).getComment());
+        // Notes: Set values to the widgets
+        holder.username.setText(getItem(position).getUsername());
+        holder.email.setText(getItem(position).getEmail());
 
-        // Notes: Set the timestamp difference
-        String timestampDifference = getTimestampDifference(getItem(position));
-        if(!timestampDifference.equals("0"))
-        {
-            holder.timestamp.setText(timestampDifference + " d");
-        }
-        else
-        {
-            holder.timestamp.setText("today");
-        }
-
-
+        // Notes: Need to query user_account_settings for the profile photo
         // Notes: TODO - Original Code - Doesn't work because on Firebase, user_account_settings does NOT have the attribute userID
-        // Notes: Set the username and profile image
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 //        Query query = reference
 ////                // Notes: Looking for the node that contains the object we're looking for
@@ -133,7 +108,9 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
         Query query = reference
                 // Notes: Looking for the node that contains the object we're looking for
                 .child(mContext.getString(R.string.dbname_user_account_settings))
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                // Notes: Looking for field that is inside the object
+                .orderByChild(mContext.getString(R.string.field_username))
+                .equalTo(getItem(position).getUsername());
 
         query.addListenerForSingleValueEvent(new ValueEventListener()
         {
@@ -144,10 +121,6 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
                 // Notes: TODO - Original code doesn't work
 //                for(DataSnapshot singleSnapshot :  dataSnapshot.getChildren())
 //                {
-//                    Log.d(TAG, "\tonDataChange: Setting username and Profile Picture!!!");
-//                    // Notes: Set username
-//                    holder.username.setText(
-//                            singleSnapshot.getValue(UserAccountSettings.class).getUsername());
 //
 //                    ImageLoader imageLoader = ImageLoader.getInstance();
 //
@@ -159,19 +132,16 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
                 // Notes: TODO - Temporary substitute
                 // Notes: if the DataSnapshot does not exists (No match found)
-                if(dataSnapshot.exists())
+                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren())
                 {
-                    Log.d(TAG, "\tonDataChange: Setting username and Profile Picture!!!");
-                    Log.d(TAG, "onDataChange: This is the datasnapshot: " + dataSnapshot.toString());
-                    // Notes: Set username
-                    holder.username.setText(
-                            dataSnapshot.getValue(UserAccountSettings.class).getUsername());
+                    Log.d(TAG, "\tonDataChange: Setting Profile Picture!!! --> " + singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo());
+
 
                     ImageLoader imageLoader = ImageLoader.getInstance();
 
                     // Notes: Set profile photo
                     imageLoader.displayImage(
-                            dataSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
+                            singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
                             holder.profileImage);
                 }
             }
@@ -182,57 +152,7 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
             }
         });
 
-        // Notes: TODO - i think we can take out the try catch since error is gone (Don't take out if)
-        try
-        {
-            // Notes: First comment of the photo is really the caption
-            if(position == 0)
-            {
-                holder.like.setVisibility(View.GONE);
-                holder.likes.setVisibility(View.GONE);
-                holder.reply.setVisibility(View.GONE);
-            }
-        }
-        catch (NullPointerException e)
-        {
-            Log.e(TAG, "getView: NullPointerException: " + e.getMessage() );
-        }
-
-
         return convertView;
     }
-
-    /**
-     * Returns a string representing the number of days ago the post was made
-     * @return
-     */
-    private String getTimestampDifference(Comment comment){
-        Log.d(TAG, "\tgetTimestampDifference: getting timestamp difference.");
-
-
-        String difference = "";
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.US);
-        sdf.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
-
-        Date today = c.getTime();
-        sdf.format(today);
-        Date timestamp;
-
-        final String photoTimestamp = comment.getDate_created();
-
-        try
-        {
-            timestamp = sdf.parse(photoTimestamp);
-            difference = String.valueOf(Math.round(((today.getTime() - timestamp.getTime()) / 1000 / 60 / 60 / 24 )));
-        }
-        catch (ParseException e)
-        {
-            Log.e(TAG, "\tgetTimestampDifference: ParseException: " + e.getMessage() );
-            difference = "0";
-        }
-        return difference;
-    }
-
 
 }

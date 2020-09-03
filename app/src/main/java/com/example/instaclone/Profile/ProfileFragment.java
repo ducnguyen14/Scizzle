@@ -93,7 +93,11 @@ public class ProfileFragment extends Fragment
     private ImageView profileMenu;
     private BottomNavigationViewEx bottomNavigationView;
 
+    // Notes: Variables
     private Context mContext;
+    private int mFollowersCount = 0;
+    private int mFollowingCount = 0;
+    private int mPostsCount = 0;
 
 
 
@@ -130,6 +134,11 @@ public class ProfileFragment extends Fragment
         setupFirebaseAuth();
 
         setupGridView();
+
+        getFollowersCount();
+        getFollowingCount();
+        getPostsCount();
+
 
 
         editProfile.setOnClickListener(new View.OnClickListener()
@@ -192,8 +201,7 @@ public class ProfileFragment extends Fragment
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot)
             {
-                for(DataSnapshot singleSnapshot: snapshot.getChildren())
-                {
+                for(DataSnapshot singleSnapshot: snapshot.getChildren()) {
                     // Notes: Error -   com.google.firebase.database.DatabaseException: Expected a List while deserializing, but got a class java.util.HashMap
 //                    photos.add(singleSnapshot.getValue(Photo.class));
 
@@ -213,10 +221,9 @@ public class ProfileFragment extends Fragment
 
                     ArrayList<Comment> comments = new ArrayList<Comment>();
 
-                    for(DataSnapshot datasnapshot: singleSnapshot
+                    for (DataSnapshot datasnapshot : singleSnapshot
                             .child(getString(R.string.field_comments))
-                            .getChildren())
-                    {
+                            .getChildren()) {
                         // Notes: Getting individual comment
                         Comment comment = new Comment();
                         comment.setUser_id(datasnapshot.getValue(Comment.class).getUser_id());
@@ -232,10 +239,9 @@ public class ProfileFragment extends Fragment
 
 
                     List<Like> likesList = new ArrayList<Like>();
-                    for(DataSnapshot datasnapshot: singleSnapshot
+                    for (DataSnapshot datasnapshot : singleSnapshot
                             .child(getString(R.string.field_likes))
-                            .getChildren())
-                    {
+                            .getChildren()) {
                         // Notes: Getting individual likes
                         Like like = new Like();
                         like.setUser_id(datasnapshot.getValue(Like.class).getUser_id());
@@ -249,39 +255,36 @@ public class ProfileFragment extends Fragment
                     // Notes: Step 3) Add photo object to list of photos to be displayed on gridview
                     photos.add(photo);
 
-                }
-
-                // Notes: Set up image grid
-                int gridWidth = getResources().getDisplayMetrics().widthPixels;
-                int imageWidth = gridWidth/NUM_GRID_COLUMNS;
-
-                gridView.setColumnWidth(imageWidth);
 
 
-                // Notes: Getting the imageURLs pathways
-                ArrayList<String> imgUrls = new ArrayList<String>();
-                for(int i = 0; i < photos.size(); i++)
-                {
-                    imgUrls.add(photos.get(i).getImage_path());
-                }
-
-                // Notes: Setting images to the grid
-                GridImageAdapter adapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, "", imgUrls);
-                gridView.setAdapter(adapter);
-
-
-                // Notes: Setting onClickListener onto the gridview items
-                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-                {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-                    {
-                        // Notes: Use the interface OnGridImageSelectedListener to navigate to the ViewPostFragment
-                        mOnGridImageSelectedListener.onGridImageSelected(photos.get(position), ACTIVITY_NUM);
                     }
-                });
+
+                    // Notes: Set up image grid
+                    int gridWidth = getResources().getDisplayMetrics().widthPixels;
+                    int imageWidth = gridWidth / NUM_GRID_COLUMNS;
+
+                    gridView.setColumnWidth(imageWidth);
 
 
+                    // Notes: Getting the imageURLs pathways
+                    ArrayList<String> imgUrls = new ArrayList<String>();
+                    for (int i = 0; i < photos.size(); i++) {
+                        imgUrls.add(photos.get(i).getImage_path());
+                    }
+
+                    // Notes: Setting images to the grid
+                    GridImageAdapter adapter = new GridImageAdapter(getActivity(), R.layout.layout_grid_imageview, "", imgUrls);
+                    gridView.setAdapter(adapter);
+
+
+                    // Notes: Setting onClickListener onto the gridview items
+                    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            // Notes: Use the interface OnGridImageSelectedListener to navigate to the ViewPostFragment
+                            mOnGridImageSelectedListener.onGridImageSelected(photos.get(position), ACTIVITY_NUM);
+                        }
+                    });
             }
 
             @Override
@@ -292,6 +295,116 @@ public class ProfileFragment extends Fragment
         });
 
     }
+
+
+
+    private void getFollowersCount()
+    {
+        mFollowersCount = 0;
+
+        // Notes: Set follow status
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child(getString(R.string.dbname_followers))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        query.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                // Notes: A match is found
+                for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                {
+                    Log.d(TAG, "onDataChange: found follower: " + singleSnapshot.getValue().toString());
+                    mFollowersCount++;
+                }
+
+                // Notes: Update the followers number on Profile
+                mFollowers.setText(String.valueOf(mFollowersCount));
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
+    }
+
+
+    private void getFollowingCount()
+    {
+        mFollowingCount = 0;
+
+        // Notes: Set follow status
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child(getString(R.string.dbname_following))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        query.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                // Notes: A match is found
+                for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                {
+                    Log.d(TAG, "onDataChange: found following user: " + singleSnapshot.getValue().toString());
+                    mFollowingCount++;
+                }
+
+                // Notes: Update the following number on Profile
+                mFollowing.setText(String.valueOf(mFollowingCount));
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
+    }
+
+
+    private void getPostsCount()
+    {
+        mPostsCount = 0;
+
+        // Notes: Set follow status
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child(getString(R.string.dbname_user_photos))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        query.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                // Notes: A match is found
+                for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                {
+                    Log.d(TAG, "onDataChange: post #: " + singleSnapshot.getValue().toString());
+                    mPostsCount++;
+                }
+
+                // Notes: Update the posts number on Profile
+                mPosts.setText(String.valueOf(mPostsCount));
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
+    }
+
 
 
 
@@ -311,9 +424,7 @@ public class ProfileFragment extends Fragment
         mUsername.setText(settings.getUsername());
         mWebsite.setText(settings.getWebsite());
         mDescription.setText(settings.getDescription());
-        mPosts.setText(String.valueOf(settings.getPosts()));
-        mFollowing.setText(String.valueOf(settings.getFollowing()));
-        mFollowers.setText(String.valueOf(settings.getFollowers()));
+
         mProgressBar.setVisibility(View.GONE);
 
     }

@@ -87,13 +87,14 @@ public class ViewProfileFragment extends Fragment
 
 
     // Notes: Widgets
-    private TextView mPosts, mFollowers, mFollowing, mDisplayName, mUsername, mWebsite, mDescription;
+    private TextView mPosts, mFollowers, mFollowing, mDisplayName, mUsername, mWebsite, mDescription, mFollow, mUnfollow;
     private ProgressBar mProgressBar;
     private CircleImageView mProfilePhoto;
     private GridView gridView;
     private Toolbar toolbar;
     private ImageView profileMenu;
     private BottomNavigationViewEx bottomNavigationView;
+    private TextView editProfile;
 
     // Notes: Variables
     private User mUser;
@@ -120,8 +121,10 @@ public class ViewProfileFragment extends Fragment
         toolbar = (Toolbar) view.findViewById(R.id.profileToolBar);
         profileMenu = (ImageView) view.findViewById(R.id.profileMenu);
         bottomNavigationView = (BottomNavigationViewEx) view.findViewById(R.id.bottomNavViewBar);
+        mFollow = (TextView) view.findViewById(R.id.follow);
+        mUnfollow = (TextView) view.findViewById(R.id.unFollow);
+        editProfile = (TextView) view.findViewById(R.id.textEditProfile);
         mContext = getActivity();
-        TextView editProfile = (TextView) view.findViewById(R.id.textEditProfile);
         Log.d(TAG, "onCreateView: stared.");
 
 
@@ -145,24 +148,100 @@ public class ViewProfileFragment extends Fragment
 
         setupFirebaseAuth();
 
+        isFollowing();
 
-//        editProfile.setOnClickListener(new View.OnClickListener()
-//        {
-//            @Override
-//            public void onClick(View v)
-//            {
-//                Log.d(TAG, "\tonClick: navigating to " + mContext.getString(R.string.edit_profile_fragment));
-//
-//                // Notes: Need to navigate to AccountSettingsActivity, then to EditProfileFragment
-//                Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
-//                intent.putExtra(getString(R.string.calling_activity), getString(R.string.profile_activity));
-//                startActivity(intent);
-//
-//                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-//
-//                // Notes: Don't call finish() because we want to be able to navigate back to this activity
-//            }
-//        });
+        // Notes: TODO - redo the follow, following, unfollow methods, poor designing
+        mFollow.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Log.d(TAG, "\tonClick: now following: " + mUser.getUsername());
+
+                /*
+                    Notes: TODO - Use this:
+                        private FirebaseDatabase mFirebaseDatabase;
+                        private DatabaseReference myRef;
+                        mFirebaseDatabase = FirebaseDatabase.getInstance();
+                        myRef = mFirebaseDatabase.getReference();
+                 */
+
+                FirebaseDatabase.getInstance()
+                        .getReference()
+                        .child(getString(R.string.dbname_following))
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(mUser.getUser_id())
+                        .child(getString(R.string.field_user_id))
+                        .setValue(mUser.getUser_id());
+
+                FirebaseDatabase.getInstance()
+                        .getReference()
+                        .child(getString(R.string.dbname_followers))
+                        .child(mUser.getUser_id())
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(getString(R.string.field_user_id))
+                        .setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
+                setFollowing();
+
+            }
+        });
+
+        mUnfollow.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Log.d(TAG, "\tonClick: now unfollowing: " + mUser.getUsername());
+
+                                /*
+                    Notes: TODO - Use this:
+                        private FirebaseDatabase mFirebaseDatabase;
+                        private DatabaseReference myRef;
+                        mFirebaseDatabase = FirebaseDatabase.getInstance();
+                        myRef = mFirebaseDatabase.getReference();
+                 */
+
+                FirebaseDatabase.getInstance()
+                        .getReference()
+                        .child(getString(R.string.dbname_following))
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(mUser.getUser_id())
+                        .removeValue();
+
+                FirebaseDatabase.getInstance()
+                        .getReference()
+                        .child(getString(R.string.dbname_followers))
+                        .child(mUser.getUser_id())
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .removeValue();
+
+
+                setUnfollowing();
+            }
+        });
+
+
+
+
+        editProfile.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Log.d(TAG, "\tonClick: navigating to " + mContext.getString(R.string.edit_profile_fragment));
+
+                // Notes: Need to navigate to AccountSettingsActivity, then to EditProfileFragment
+                Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
+                intent.putExtra(getString(R.string.calling_activity), getString(R.string.profile_activity));
+                startActivity(intent);
+
+                getActivity().overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+                // Notes: Don't call finish() because we want to be able to navigate back to this activity
+            }
+        });
 
 
 
@@ -286,6 +365,68 @@ public class ViewProfileFragment extends Fragment
         });
 
     }
+
+    private void isFollowing()
+    {
+        Log.d(TAG, "\tisFollowing: Checking if following this users.");
+        setUnfollowing();
+
+
+        // Notes: Set the profile widgets
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child(getString(R.string.dbname_following))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .orderByChild(getString(R.string.field_user_id))
+                .equalTo(mUser.getUser_id());
+
+        query.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                // Notes: A match is found
+                for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                {
+                    Log.d(TAG, "onDataChange: found user: " + singleSnapshot.getValue().toString());
+                    setFollowing();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
+
+
+    }
+
+    private void setFollowing()
+    {
+        Log.d(TAG, "\tsetFollowing: updating UI for following this user");
+        mFollow.setVisibility(View.GONE);
+        mUnfollow.setVisibility(View.VISIBLE);
+        editProfile.setVisibility(View.GONE);
+    }
+
+    private void setUnfollowing()
+    {
+        Log.d(TAG, "\tsetFollowing: updating UI for unfollowing this user");
+        mFollow.setVisibility(View.VISIBLE);
+        mUnfollow.setVisibility(View.GONE);
+        editProfile.setVisibility(View.GONE);
+    }
+
+    private void setCurrentUsersProfile()
+    {
+        Log.d(TAG, "\tsetFollowing: updating UI for showing this user their own profile");
+        mFollow.setVisibility(View.GONE);
+        mUnfollow.setVisibility(View.GONE);
+        editProfile.setVisibility(View.VISIBLE);
+    }
+
 
     private void setupImageGrid(final ArrayList<Photo> photos)
     {

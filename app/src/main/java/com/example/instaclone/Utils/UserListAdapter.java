@@ -138,20 +138,20 @@ public class UserListAdapter extends ArrayAdapter<User>{
 
 
                     // Notes: Original Code
-//                    ImageLoader imageLoader = ImageLoader.getInstance();
-//
-//                    // Notes: Set profile photo
-//                    imageLoader.displayImage(
-//                            singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
-//                            holder.profileImage);
+                    ImageLoader imageLoader = ImageLoader.getInstance();
 
-//                    // Notes: Temporary Substitute
-                    UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
-                    ImageLoader.getInstance().init(universalImageLoader.getConfig());
                     // Notes: Set profile photo
-                    ImageLoader.getInstance().displayImage(
+                    imageLoader.displayImage(
                             singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
                             holder.profileImage);
+
+//                    // Notes: Temporary Substitute
+//                    UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
+//                    ImageLoader.getInstance().init(universalImageLoader.getConfig());
+//                    // Notes: Set profile photo
+//                    ImageLoader.getInstance().displayImage(
+//                            singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
+//                            holder.profileImage);
 
                 }
             }

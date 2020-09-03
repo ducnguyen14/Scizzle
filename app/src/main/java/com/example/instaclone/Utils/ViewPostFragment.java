@@ -100,6 +100,7 @@ public class ViewPostFragment extends Fragment {
     private Boolean mLikedByCurrentUser;
     private StringBuilder mUsers;
     private String mLikesString = "";
+    private User mCurrentUser;
 
 
 
@@ -129,6 +130,16 @@ public class ViewPostFragment extends Fragment {
         mHeart = new Heart(mHeartWhite, mHeartRed);
         mGestureDetector = new GestureDetector(getActivity(), new GestureListener());
 
+
+        setupFirebaseAuth();
+        setupBottomNavigationView();
+
+        return view;
+    }
+
+
+    private void init()
+    {
         try
         {
 //            mPhoto = getPhotoFromBundle();
@@ -154,7 +165,7 @@ public class ViewPostFragment extends Fragment {
                         // Notes: Creating and initializing photo from Firebase
                         Photo newPhoto = new Photo();
                         Map<String, Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
-                        
+
                         newPhoto.setCaption(objectMap.get(getString(R.string.field_caption)).toString());
                         newPhoto.setTags(objectMap.get(getString(R.string.field_tags)).toString());
                         newPhoto.setPhoto_id(objectMap.get(getString(R.string.field_photo_id)).toString());
@@ -178,8 +189,9 @@ public class ViewPostFragment extends Fragment {
 
                         mPhoto = newPhoto;
 
+                        getCurrentUser();
                         getPhotoDetails();
-                        getLikesString();
+//                        getLikesString();
 
                     }
 
@@ -199,12 +211,20 @@ public class ViewPostFragment extends Fragment {
 
         }
 
-        setupFirebaseAuth();
-        setupBottomNavigationView();
-
-        return view;
     }
 
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        // Notes: Checks to see if fragment is added
+        if(isAdded())
+        {
+            init();
+        }
+
+    }
 
     /**
      * Notes: Always need this method when we use interfaces
@@ -290,7 +310,7 @@ public class ViewPostFragment extends Fragment {
                             String[] splitUsers = mUsers.toString().split(", ");
 
                             // Notes: Check if the current user liked their own photo
-                            if(mUsers.toString().contains(mUserAccountSettings.getUsername() + ","))
+                            if(mUsers.toString().contains(mCurrentUser.getUsername() + ","))
                             {
                                 // Notes: Use mLikedByCurrentUser to toggle the heart icon
                                 mLikedByCurrentUser = true;
@@ -374,6 +394,44 @@ public class ViewPostFragment extends Fragment {
         });
 
     }
+
+
+    private void getCurrentUser()
+    {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        Query query = reference
+                .child(getString(R.string.dbname_users))
+                .orderByChild(getString(R.string.field_user_id))
+                .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
+        query.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                // Notes: If a match is found
+                for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                {
+                    Log.d(TAG, "\tonDataChange: match found");
+
+                    mCurrentUser = singleSnapshot.getValue(User.class);
+
+                }
+
+                getLikesString();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
+    }
+
 
 
     public class GestureListener extends GestureDetector.SimpleOnGestureListener

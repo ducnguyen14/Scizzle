@@ -138,14 +138,17 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
         // Notes: Set the comments
         List<Comment> comments = getItem(position).getComments();
         holder.comments.setText("View all " + comments.size() + " comments");
-        holder.comment.setOnClickListener(new View.OnClickListener()
+        holder.comments.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
                 Log.d(TAG, "\tonClick: loading comment thread for " + getItem(position).getPhoto_id());
 
-                ((HomeActivity)mContext).onCommentThreadSelected(getItem(position), holder.settings);
+                ((HomeActivity)mContext).onCommentThreadSelected(getItem(position), mContext.getString(R.string.home_activity));
+
+                // Notes: If we navigate to the Comment Thread, we want to hide the ViewPager Layout and display the FrameLayout
+                ((HomeActivity)mContext).hideLayout();
             }
         });
 
@@ -298,9 +301,10 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                         @Override
                         public void onClick(View v)
                         {
-                            ((HomeActivity)mContext).onCommentThreadSelected(getItem(position), holder.settings);
+                            ((HomeActivity)mContext).onCommentThreadSelected(getItem(position), mContext.getString(R.string.home_activity));
 
-                            //another thing?
+                            // Notes: If we navigate to the Comment Thread, we want to hide the ViewPager Layout and display the FrameLayout
+                            ((HomeActivity)mContext).hideLayout();
                         }
                     });
 
@@ -599,7 +603,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                                 String[] splitUsers = holder.users.toString().split(", ");
 
                                 // Notes: Check if the current user liked their own photo
-                                if(holder.users.toString().contains(holder.user.getUsername() + ","))
+                                if(holder.users.toString().contains(currentUsername + ","))
                                 {
                                     // Notes: Use mLikedByCurrentUser to toggle the heart icon
                                     holder.likeByCurrentUser = true;

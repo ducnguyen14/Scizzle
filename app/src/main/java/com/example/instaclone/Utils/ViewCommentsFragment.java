@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.instaclone.Home.HomeActivity;
 import com.example.instaclone.R;
 import com.example.instaclone.models.Comment;
 import com.example.instaclone.models.Like;
@@ -139,6 +140,12 @@ public class ViewCommentsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back");
+                if(getCallingActivityFromBundle().equals(getString(R.string.home_activity)))
+                {
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    // Notes: If we navigate to the Comment Thread, we want to hide the ViewPager Layout and display the FrameLayout
+                    ((HomeActivity)getActivity()).showLayout();
+                }
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
@@ -192,6 +199,25 @@ public class ViewCommentsFragment extends Fragment {
         sdf.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
         return sdf.format(new Date());
     }
+
+    /**
+     * Notes: Retrieve the home_activity from the incoming bundle
+     * @return
+     */
+    private String getCallingActivityFromBundle(){
+        Log.d(TAG, "getCallingActivityFromBundle: arguments: " + getArguments());
+
+        Bundle bundle = this.getArguments();
+        if(bundle != null)
+        {
+            return bundle.getString(mContext.getString(R.string.home_activity));
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 
     /**
      * Notes: Retrieve the photo from the incoming bundle from profileActivity interface

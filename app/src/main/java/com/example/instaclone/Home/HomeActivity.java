@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.example.instaclone.Login.LoginActivity;
 import com.example.instaclone.R;
@@ -32,6 +35,7 @@ public class HomeActivity extends AppCompatActivity {
     // Notes: Constants
     private static final String TAG = "HomeActivity/DEBU";
     private static final int ACTIVITY_NUM = 0;
+    private static final int HOME_FRAGMENT = 1;
     private Context mContext = HomeActivity.this;
 
 
@@ -39,12 +43,23 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+
+    // Notes: Widgets
+    private ViewPager mViewPager;
+    private FrameLayout mFrameLayout;
+    private RelativeLayout mRelativeLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
         Log.d(TAG, "onCreate: Starting");
+
+
+        mViewPager = (ViewPager) findViewById(R.id.viewpager_container);
+        mFrameLayout = (FrameLayout) findViewById(R.id.container);
+        mRelativeLayout = (RelativeLayout) findViewById(R.id.relLayoutParent);
 
 
 
@@ -62,15 +77,15 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-    public void onCommentThreadSelected(Photo photo, UserAccountSettings settings)
+    public void onCommentThreadSelected(Photo photo, String calling_activity)
     {
         Log.d(TAG, "\tonCommentThreadSelected: selected a comment thread");
         ViewCommentsFragment fragment = new ViewCommentsFragment();
 
         // Notes: Passing Photo to fragment
         Bundle args = new Bundle();
-        args.putParcelable(getString(R.string.bundle_photo), photo);
-        args.putParcelable(getString(R.string.bundle_user_account_settings), settings);
+        args.putParcelable(getString(R.string.photo), photo);
+        args.putString(getString(R.string.home_activity), calling_activity);
         fragment.setArguments(args);
 
         /* Notes: Fragments have a different stack than activites and doesn't keep track
@@ -84,6 +99,40 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
+    public void hideLayout(){
+        Log.d(TAG, "hideLayout: hiding layout");
+        mRelativeLayout.setVisibility(View.GONE);
+
+        /*
+            Notes: FrameLayout is what the CommentFragment will be inserted into.
+                The error before was that there was no FrameLayout to inflate the Fragment,
+                it was trying to inflate through a viewpager which does not work.
+         */
+        mFrameLayout.setVisibility(View.VISIBLE);
+    }
+
+
+    public void showLayout(){
+        Log.d(TAG, "hideLayout: showing layout");
+        mRelativeLayout.setVisibility(View.VISIBLE);
+        mFrameLayout.setVisibility(View.GONE);
+    }
+
+
+    /**
+     * Notes: If the back button was pressed, and user navigated away from the CommentThread
+     *      and the FrameLayout is Visibile, we want to hide the FrameLayout. We want to show the
+     *      MainFeed RelativeLayout
+     */
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if(mFrameLayout.getVisibility() == View.VISIBLE)
+        {
+            showLayout();
+        }
+    }
 
     /**
      * Notes: Initialized the ImageLoader with its configurations
@@ -126,12 +175,11 @@ public class HomeActivity extends AppCompatActivity {
         adapter.addFragment(new MessagesFragment()); // Notes: Index 2
 
         // Notes: Setting ViewPager to Adapter
-        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        viewPager.setAdapter(adapter);
+        mViewPager.setAdapter(adapter);
 
         // Notes: Setting tabLayout to viewPager
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setupWithViewPager(mViewPager);
 
         // Notes: Setting icons according to their tabs
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_camera);
@@ -211,8 +259,11 @@ public class HomeActivity extends AppCompatActivity {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
 
+        mViewPager.setCurrentItem(HOME_FRAGMENT);
+
         // Notes: For whatever reason we may start this activity, we always check the user
         checkCurrentUser(mAuth.getCurrentUser());
+
 
     }
 

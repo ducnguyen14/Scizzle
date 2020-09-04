@@ -1,6 +1,7 @@
 package com.example.instaclone.Utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -14,7 +15,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.instaclone.Home.HomeActivity;
+import com.example.instaclone.Profile.ProfileActivity;
 import com.example.instaclone.R;
+import com.example.instaclone.models.Comment;
 import com.example.instaclone.models.Like;
 import com.example.instaclone.models.Photo;
 import com.example.instaclone.models.User;
@@ -120,82 +124,197 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        // Notes: Get the current users username (Need for checking likes strings)
+        getCurrentUsername();
+
+        getLikesString(holder);
+
         /*
             Notes: The reason why in the constructor we passed objects to the super so that
                 we can access it via getItem(int) or else getItem(int) will return null
          */
 
-        // Notes: Set values to the widgets
-        holder.username.setText(getItem(position).getUsername());
-        holder.email.setText(getItem(position).getEmail());
+        // Notes: Set the comments
+        List<Comment> comments = getItem(position).getComments();
+        holder.comments.setText("View all " + comments.size() + " comments");
+        holder.comment.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Log.d(TAG, "\tonClick: loading comment thread for " + getItem(position).getPhoto_id());
 
-        // Notes: Need to query user_account_settings for the profile photo
-        // Notes: TODO - Original Code - Doesn't work because on Firebase, user_account_settings does NOT have the attribute userID
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-//        Query query = reference
-////                // Notes: Looking for the node that contains the object we're looking for
-////                .child(mContext.getString(R.string.dbname_user_account_settings))
-////                // Notes: Looking for field that is inside the object
-////                .orderByChild(mContext.getString(R.string.field_user_id))
-////                .equalTo(getItem(position).getUser_id());
+                ((HomeActivity)mContext).onCommentThreadSelected(getItem(position), holder.settings);
+            }
+        });
 
-        // Notes: TODO - Temporary substitute
-        Query query = reference
+        // Notes: Set the time stamp of the post
+        String timestampDifference = getTimestampDifference(getItem(position));
+        if(!timestampDifference.equals("0"))
+        {
+            holder.timeDetla.setText(timestampDifference + " Days Ago");
+        }
+        else
+        {
+            holder.timeDetla.setText("Today");
+        }
+
+        // Notes: Set post image
+        final ImageLoader imageLoader = ImageLoader.getInstance();
+        imageLoader.displayImage(getItem(position).getImage_path(), holder.image);
+
+        // Notes: Get the Profile Image and Username
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        // Notes: TODO - Prepare for a lot of debugging
+
+        // Notes: TODO - BUG - Original Code
+        // Notes: This query is responsible for finding the profile image and username of a photo
+//        final Query query = reference
+//                // Notes: Looking for the node that contains the object we're looking for
+//                .child(mContext.getString(R.string.dbname_user_account_settings))
+//                .orderByChild(mContext.getString(R.string.field_user_id))
+//                .equalTo(getItem(position).getUser_id());
+
+        // Notes: TODO - Temporary solution
+        // Notes: This query is responsible for finding the profile image and username of a photo
+        final Query query = reference
                 // Notes: Looking for the node that contains the object we're looking for
                 .child(mContext.getString(R.string.dbname_user_account_settings))
-                // Notes: Looking for field that is inside the object
-                .orderByChild(mContext.getString(R.string.field_username))
-                .equalTo(getItem(position).getUsername());
+                .child(getItem(position).getUser_id());
 
+        // Notes: Look for all the likes in the photo
         query.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
+            public void onDataChange(@NonNull DataSnapshot snapshot)
             {
+                // Notes: TODO -  Original Code Error
                 // Notes: If a match is found
-                // Notes: TODO - Original code doesn't work
-//                for(DataSnapshot singleSnapshot :  dataSnapshot.getChildren())
+//                for(DataSnapshot singleSnapshot: snapshot.getChildren())
 //                {
+////                    currentUsername = singleSnapshot.getValue(UserAccountSettings.class).getUsername();
+//                    Log.d(TAG, "onDataChange: found user: " + singleSnapshot.getValue(UserAccountSettings.class).getUsername());
 //
-//                    ImageLoader imageLoader = ImageLoader.getInstance();
+//                    holder.username.setText(singleSnapshot.getValue(UserAccountSettings.class).getUsername());
+//                    holder.username.setOnClickListener(new View.OnClickListener()
+//                    {
+//                        @Override
+//                        public void onClick(View v)
+//                        {
+//                            Log.d(TAG, "onClick: navigating to profile of: " +
+//                                    holder.user.getUsername());
 //
-//                    // Notes: Set profile photo
-//                    imageLoader.displayImage(
-//                            singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
-//                            holder.profileImage);
+//                            Intent intent = new Intent(mContext, ProfileActivity.class);
+//                            intent.putExtra(mContext.getString(R.string.calling_activity),
+//                                    mContext.getString(R.string.home_activity));
+//                            intent.putExtra(mContext.getString(R.string.intent_user), holder.user);
+//                            mContext.startActivity(intent);
+//                        }
+//                    });
+//
+//                    // Notes: Set the profile image
+//                    imageLoader.displayImage(singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
+//                            holder.mprofileImage);
+//                    holder.mprofileImage.setOnClickListener(new View.OnClickListener()
+//                    {
+//                        @Override
+//                        public void onClick(View v)
+//                        {
+//                            Log.d(TAG, "onClick: navigating to profile of: " +
+//                                    holder.user.getUsername());
+//
+//                            Intent intent = new Intent(mContext, ProfileActivity.class);
+//                            intent.putExtra(mContext.getString(R.string.calling_activity),
+//                                    mContext.getString(R.string.home_activity));
+//                            intent.putExtra(mContext.getString(R.string.intent_user), holder.user);
+//                            mContext.startActivity(intent);
+//                        }
+//                    });
+//
+//
+//                    holder.settings = singleSnapshot.getValue(UserAccountSettings.class);
+//                    holder.comment.setOnClickListener(new View.OnClickListener()
+//                    {
+//                        @Override
+//                        public void onClick(View v) {
+//                            ((HomeActivity)mContext).onCommentThreadSelected(getItem(position), holder.settings);
+//
+//                            //another thing?
+//                        }
+//                    });
 //                }
 
-                // Notes: TODO - Temporary substitute
-                // Notes: if the DataSnapshot does not exists (No match found)
-                for(DataSnapshot singleSnapshot : dataSnapshot.getChildren())
+                // Notes: TODO - Temporary Substitute
+                if(snapshot.exists())
                 {
-                    Log.d(TAG, "\tonDataChange: Setting Profile Picture!!! --> " + singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo());
+                    Log.d(TAG, "onDataChange: found user: "
+                            + snapshot.getValue(UserAccountSettings.class).getUsername());
 
+                    // Notes: Set username
+                    holder.username.setText(snapshot.getValue(UserAccountSettings.class).getUsername());
+                    // Notes: Navigate to ProfileActivity if username was clicked
+                    holder.username.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            Log.d(TAG, "\tonClick: navigating to profile of: " +
+                                    holder.user.getUsername());
 
-                    // Notes: Original Code
-                    ImageLoader imageLoader = ImageLoader.getInstance();
+                            Intent intent = new Intent(mContext, ProfileActivity.class);
+                            intent.putExtra(mContext.getString(R.string.calling_activity),
+                                    mContext.getString(R.string.home_activity));
+                            intent.putExtra(mContext.getString(R.string.intent_user), holder.user);
+                            mContext.startActivity(intent);
+                        }
+                    });
 
                     // Notes: Set profile photo
-                    imageLoader.displayImage(
-                            singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
-                            holder.profileImage);
+                    imageLoader.displayImage(snapshot.getValue(UserAccountSettings.class).getProfile_photo(),
+                            holder.mprofileImage);
+                    // Notes: Navigate to ProfileActivity if profile photo was clicked
+                    holder.mprofileImage.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            Log.d(TAG, "\tonClick: navigating to profile of: " +
+                                    holder.user.getUsername());
 
-//                    // Notes: Temporary Substitute
-//                    UniversalImageLoader universalImageLoader = new UniversalImageLoader(mContext);
-//                    ImageLoader.getInstance().init(universalImageLoader.getConfig());
-//                    // Notes: Set profile photo
-//                    ImageLoader.getInstance().displayImage(
-//                            singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
-//                            holder.profileImage);
+                            Intent intent = new Intent(mContext, ProfileActivity.class);
+                            intent.putExtra(mContext.getString(R.string.calling_activity),
+                                    mContext.getString(R.string.home_activity));
+                            intent.putExtra(mContext.getString(R.string.intent_user), holder.user);
+                            mContext.startActivity(intent);
+                        }
+                    });
+
+                    // Notes: Set the settings icon on top left
+                    holder.settings = snapshot.getValue(UserAccountSettings.class);
+                    holder.comment.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            ((HomeActivity)mContext).onCommentThreadSelected(getItem(position), holder.settings);
+
+                            //another thing?
+                        }
+                    });
 
                 }
+
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: query cancelled.");
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
             }
         });
+
+
 
         return convertView;
     }
@@ -332,6 +451,50 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
 
         holder.heart.toggleLike();
         getLikesString(holder);
+    }
+
+
+
+    private void getCurrentUsername()
+    {
+        Log.d(TAG, "\tgetCurrentUsername: retrieving user account settings");
+
+
+        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        // Notes: TODO - Prepare for a lot of debugging
+
+        // Notes: This query is responsible for finding the username
+        final Query query = reference
+                // Notes: Looking for the node that contains the object we're looking for
+                .child(mContext.getString(R.string.dbname_users))
+                // Notes: Looking for field that is inside the object
+                .orderByChild(mContext.getString(R.string.field_user_id))
+                .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        query.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+
+                // Notes: If a match is found
+                for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                {
+                    currentUsername = singleSnapshot.getValue(UserAccountSettings.class).getUsername();
+                }
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
+
     }
 
 

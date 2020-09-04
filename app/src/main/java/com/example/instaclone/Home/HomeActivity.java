@@ -2,6 +2,7 @@ package com.example.instaclone.Home;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Context;
@@ -16,6 +17,9 @@ import com.example.instaclone.R;
 import com.example.instaclone.Utils.BottomNavigationViewHelper;
 import com.example.instaclone.Utils.SectionsPagerAdapter;
 import com.example.instaclone.Utils.UniversalImageLoader;
+import com.example.instaclone.Utils.ViewCommentsFragment;
+import com.example.instaclone.models.Photo;
+import com.example.instaclone.models.UserAccountSettings;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -56,6 +60,29 @@ public class HomeActivity extends AppCompatActivity {
 //        mAuth.signOut();
 
     }
+
+
+    public void onCommentThreadSelected(Photo photo, UserAccountSettings settings)
+    {
+        Log.d(TAG, "\tonCommentThreadSelected: selected a comment thread");
+        ViewCommentsFragment fragment = new ViewCommentsFragment();
+
+        // Notes: Passing Photo to fragment
+        Bundle args = new Bundle();
+        args.putParcelable(getString(R.string.bundle_photo), photo);
+        args.putParcelable(getString(R.string.bundle_user_account_settings), settings);
+        fragment.setArguments(args);
+
+        /* Notes: Fragments have a different stack than activites and doesn't keep track
+            of own stack. We need to keep track of it
+         */
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.container, fragment);
+        transaction.addToBackStack(getString(R.string.view_comments_fragment));
+        transaction.commit();
+    }
+
 
 
     /**

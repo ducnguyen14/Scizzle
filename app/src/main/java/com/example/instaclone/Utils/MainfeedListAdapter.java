@@ -58,6 +58,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
         mContext = context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layoutResource = resource;
+        mReference = FirebaseDatabase.getInstance().getReference();
     }
 
     /**
@@ -103,7 +104,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             holder.comments = (TextView) convertView.findViewById(R.id.image_comments_link);
             holder.caption = (TextView) convertView.findViewById(R.id.image_caption);
             holder.timeDetla = (TextView) convertView.findViewById(R.id.image_time_posted);
-            holder.mprofileImage = (CircleImageView) convertView.findViewById(R.id.profile_image);
+            holder.mprofileImage = (CircleImageView) convertView.findViewById(R.id.profile_photo);
             holder.heart = new Heart(holder.heartWhite, holder.heartRed);
             /*
                 Notes: The reason why in the constructor we passed objects to the super so that
@@ -304,6 +305,41 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                     });
 
                 }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+
+            }
+        });
+
+        // Notes: Get the user object
+        // Notes: TODO - Prepare for a lot of debugging
+        // Notes: This query is responsible for finding the User
+        final Query userQuery = mReference
+                // Notes: Looking for the node that contains the object we're looking for
+                .child(mContext.getString(R.string.dbname_users))
+                // Notes: Looking for field that is inside the object
+                .orderByChild(mContext.getString(R.string.field_user_id))
+                .equalTo(getItem(position).getUser_id());
+
+        userQuery.addListenerForSingleValueEvent(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+
+                // Notes: If a match is found
+                for(DataSnapshot singleSnapshot: snapshot.getChildren())
+                {
+                    Log.d(TAG, "onDataChange: found user: " + singleSnapshot.getValue(User.class).getUsername());
+
+                    holder.user = singleSnapshot.getValue(User.class);
+                }
+
+
 
             }
 

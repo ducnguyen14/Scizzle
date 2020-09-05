@@ -1,7 +1,13 @@
 # InstaClone
 
-This application is a simplified version of Instagram, that tries to implement the basics of a social media system, but is still not yet complete. 
+**************************************************
+********* Welcome to my InstaClone App!! *********
+**************************************************
 
+
+This is an Android Application that is a simplified version of Instagram. 
+
+I have implemented the basics of a social media system, but this application is still not yet completed to where I would like it to be. 
 I have built almost the entire interface for the front-end.
 For the back-end, it was done 100% in Firebase just for simplicity. 
 

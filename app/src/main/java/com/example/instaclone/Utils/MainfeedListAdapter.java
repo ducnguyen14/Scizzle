@@ -45,6 +45,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainfeedListAdapter extends ArrayAdapter<Photo> {
     private static final String TAG = "MainfedListAdapt/DEBUG";
 
+    /**
+     * Notes: Interface that load more photos in ListView.
+     *      Implemented in HomeActivity
+     */
+    public interface OnLoadMoreItemsListener
+    {
+        void onLoadMoreItems();
+    }
+    OnLoadMoreItemsListener mOnLoadMoreItemsListener;
+
+
+
+
     private LayoutInflater mInflater;
     private int layoutResource;
     private Context mContext;
@@ -128,7 +141,12 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
         // Notes: Get the current users username (Need for checking likes strings)
         getCurrentUsername();
 
+        // Notes: Get the likes string
         getLikesString(holder);
+
+        // Notes: Set the caption
+        holder.caption.setText(getItem(position).getCaption());
+
 
         /*
             Notes: The reason why in the constructor we passed objects to the super so that
@@ -354,10 +372,54 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             }
         });
 
+        // Notes: If we reached the end of the list, we load more data if there's any
+        if(reachedEndOfList(position))
+        {
+            loadMoreData();
+        }
+
+
 
 
         return convertView;
     }
+
+
+    /**
+     * Notes: This method detects when user has reached the end of the list
+     * @param position
+     * @return
+     */
+    private boolean reachedEndOfList(int position)
+    {
+        return position == getCount() - 1;
+    }
+
+    /**
+     * Notes: This method checks that if the position that was reached was the end
+     */
+    private void loadMoreData()
+    {
+        try
+        {
+            mOnLoadMoreItemsListener = (OnLoadMoreItemsListener) getContext();
+        }
+        catch(ClassCastException e)
+        {
+            Log.e(TAG, "loadMoreData: ClassCastException: " +e.getMessage() );
+        }
+
+        try
+        {
+            mOnLoadMoreItemsListener.onLoadMoreItems();
+        }
+        catch(NullPointerException e)
+        {
+            Log.e(TAG, "loadMoreData: ClassCastException: " +e.getMessage() );
+        }
+    }
+
+
 
 
     public class GestureListener extends GestureDetector.SimpleOnGestureListener

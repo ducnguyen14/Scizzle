@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import com.example.instaclone.Login.LoginActivity;
 import com.example.instaclone.R;
 import com.example.instaclone.Utils.BottomNavigationViewHelper;
+import com.example.instaclone.Utils.MainfeedListAdapter;
 import com.example.instaclone.Utils.SectionsPagerAdapter;
 import com.example.instaclone.Utils.UniversalImageLoader;
 import com.example.instaclone.Utils.ViewCommentsFragment;
@@ -30,7 +31,23 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements
+        MainfeedListAdapter.OnLoadMoreItemsListener {
+
+    @Override
+    public void onLoadMoreItems()
+    {
+        Log.d(TAG, "onLoadMoreItems: displaying more photos");
+
+        // Notes: Android has a default way of assigning tags
+        HomeFragment fragment = (HomeFragment)getSupportFragmentManager()
+                .findFragmentByTag("android:switcher:" + R.id.viewpager_container + ":" + mViewPager.getCurrentItem());
+
+        if(fragment != null)
+        {
+            fragment.displayMorePhotos();
+        }
+    }
 
     // Notes: Constants
     private static final String TAG = "HomeActivity/DEBU";

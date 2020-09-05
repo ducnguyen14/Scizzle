@@ -18,6 +18,8 @@ import com.example.instaclone.Utils.ViewCommentsFragment;
 import com.example.instaclone.Utils.ViewPostFragment;
 import com.example.instaclone.Utils.ViewProfileFragment;
 import com.example.instaclone.models.Photo;
+import com.example.instaclone.models.User;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class ProfileActivity extends AppCompatActivity implements
         ProfileFragment.OnGridImageSelectedListener ,
@@ -127,23 +129,46 @@ public class ProfileActivity extends AppCompatActivity implements
 
             if(intent.hasExtra(getString(R.string.intent_user)))
             {
-                Log.d(TAG, "\tinit: inflating ViewProfileFragment");
+                User user = intent.getParcelableExtra(getString(R.string.intent_user));
+                if(!user.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                {
+                    Log.d(TAG, "\tinit: inflating ViewProfileFragment");
 
-                ViewProfileFragment fragment = new ViewProfileFragment();
+                    ViewProfileFragment fragment = new ViewProfileFragment();
 
-                // Notes: Passing User to fragment
-                Bundle args = new Bundle();
-                args.putParcelable(getString(R.string.intent_user), intent.getParcelableExtra(getString(R.string.intent_user)));
-                fragment.setArguments(args);
+                    // Notes: Passing User to fragment
+                    Bundle args = new Bundle();
+                    args.putParcelable(getString(R.string.intent_user), intent.getParcelableExtra(getString(R.string.intent_user)));
+                    fragment.setArguments(args);
 
                 /* Notes: Fragments have a different stack than activites and doesn't keep track
                     of own stack. We need to keep track of it
                  */
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-                transaction.replace(R.id.container, fragment);
-                transaction.addToBackStack(getString(R.string.view_profile_fragment));
-                transaction.commit();
+                    transaction.replace(R.id.container, fragment);
+                    transaction.addToBackStack(getString(R.string.view_profile_fragment));
+                    transaction.commit();
+                }
+                // Notes: Navigate to ProfileFragment
+                else
+                {
+                    Log.d(TAG, "\tinit: inflating ProfileFragment");
+
+                    ProfileFragment fragment = new ProfileFragment();
+
+                    /* Notes: Fragments have a different stack than activites and doesn't keep track
+                        of own stack. We need to keep track of it
+                     */
+
+                    FragmentTransaction transaction = ProfileActivity.this.getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.container, fragment);
+                    transaction.addToBackStack(getString(R.string.profile_fragment));
+                    transaction.commit();
+                }
+
+
+
             }
             else
             {

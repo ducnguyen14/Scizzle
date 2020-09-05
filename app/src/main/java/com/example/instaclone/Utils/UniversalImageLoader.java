@@ -38,6 +38,8 @@ public class UniversalImageLoader {
                 .showImageForEmptyUri(defaultImage)
                 // Notes: Default image shows if db image retrieval failed or on null input
                 .showImageOnFail(defaultImage)
+                // Notes: If the image is rotated, it will be rotated back to its original orientation
+                .considerExifParams(true)
                 .cacheOnDisk(true).cacheInMemory(true)
                 .cacheOnDisk(true).resetViewBeforeLoading(true)
                 .imageScaleType(ImageScaleType.EXACTLY)

@@ -38,12 +38,12 @@ public class NotificationsActivity extends AppCompatActivity {
      */
     private void setupBottomNavigationView()
     {
-        Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
+        Log.d(TAG, "\tsetupBottomNavigationView: setting up BottomNavigationView");
 
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
 
-        BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationViewEx);
+        BottomNavigationViewHelper.enableNavigation(mContext, this, bottomNavigationViewEx);
 
         // Notes: Highlighting the correct Icon when navigating
         Menu menu = bottomNavigationViewEx.getMenu();

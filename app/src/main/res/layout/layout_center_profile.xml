@@ -7,13 +7,7 @@
         android:layout_height="match_parent"
         android:background="@color/white">
 
-        <!-- Notes: Top Toolbar (snippet_top_profilebar.xml) -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:id="@+id/relLayout1">
-            <include layout="@layout/snippet_top_profilebar"/>
-        </RelativeLayout>
+
 
         <!-- Notes: Middle Section (Profile Pic + Posts/Followers/Following + posts grid) -->
         <RelativeLayout
@@ -45,7 +39,7 @@
                         android:layout_height="80dp"
                         android:id="@+id/profile_photo"
                         app:civ_border_color="@color/black"
-                        app:civ_border_width="2dp"
+                        app:civ_border_width="0.5dp"
                         android:layout_centerVertical="true"/>
 
                 </RelativeLayout>
@@ -76,7 +70,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/dispaly_name"
+                    android:id="@+id/display_name"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     android:text="Name"

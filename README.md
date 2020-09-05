@@ -1,4 +1,4 @@
-# InstaClone
+# Scoop
 
 **********************************************************
 ********* Welcome to my Scoop Social Media App!! *********

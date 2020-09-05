@@ -1,8 +1,8 @@
 # InstaClone
 
-**************************************************
-********* Welcome to my InstaClone App!! *********
-**************************************************
+**********************************************************
+********* Welcome to my Scoop Social Media App!! *********
+**********************************************************
 
 
 This is an Android Application that is a simplified version of Instagram. 

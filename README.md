@@ -1,4 +1,4 @@
-# Scoop
+# Scizzle
 
 **********************************************************
 ********* Welcome to my Scizzle Social Media App!! *********

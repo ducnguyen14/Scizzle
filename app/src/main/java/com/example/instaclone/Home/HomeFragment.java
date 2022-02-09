@@ -54,6 +54,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
+        System.out.println("Testing");
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         mListView = (ListView) view.findViewById(R.id.listView);
